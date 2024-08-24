@@ -1,8 +1,4 @@
----
-title: Hospitalbulance - Allocate Ambulances and Hospitals for Emergency Calls
----
-
-# Notes
+# Hospitalbulance - Allocate Ambulances and Hospitals for Emergency Calls
 
 ## Components
 

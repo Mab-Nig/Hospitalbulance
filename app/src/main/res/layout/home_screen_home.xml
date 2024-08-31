@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    >
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="38dp"
+        android:src="@drawable/resq_logo_icon">
+    </ImageView>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/resq_icon_word"
+        android:layout_marginTop="62dp"
+        android:layout_marginLeft="30dp">
+    </ImageView>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/background_word"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="30dp">
+    </ImageView>
+    <TextView
+        android:id="@+id/home_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="134dp"
+        android:textSize="7pt"
+        android:text="I need First AID"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/white">
+    </TextView>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="230dp"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/ambulance_logo"></ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="115dp"
+        android:layout_marginTop="170dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Types of First AID"
+        android:textSize="8pt"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="210dp"
+        android:id="@+id/fractures_button"
+        android:background="@drawable/fractures_icon">
+    </ImageButton>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="155dp"
+        android:layout_marginTop="210dp"
+        android:id="@+id/breath_button"
+        android:background="@drawable/breath_icon">
+    </ImageButton>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="255dp"
+        android:layout_marginTop="210dp"
+        android:id="@+id/nausea_button"
+        android:background="@drawable/nausea_icon">
+    </ImageButton>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="290dp"
+        android:id="@+id/cpr_button"
+        android:background="@drawable/cpr_icon">
+    </ImageButton>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="155dp"
+        android:layout_marginTop="290dp"
+        android:id="@+id/narcotis_button"
+        android:background="@drawable/narcotis_icon">
+    </ImageButton>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="255dp"
+        android:layout_marginTop="290dp"
+        android:id="@+id/radiation_button"
+        android:background="@drawable/radiation_icon">
+    </ImageButton>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Having an Emergency?"
+        android:layout_marginTop="370dp"
+        android:layout_marginLeft="90dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="8pt">
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press the button below\n help will arrive soon"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_marginTop="403dp"
+        android:textSize="6pt"
+        android:layout_marginLeft="120dp">
+    </TextView>
+
+
+    <ImageButton
+        android:id="@+id/call_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="53dp"
+        android:layout_marginTop="410dp"
+        android:background="@drawable/call_button">
+    </ImageButton>
+
+    <Button
+        android:id="@+id/cancle_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_marginTop="660dp"
+        android:layout_marginLeft="135dp"
+        android:textSize="8pt"
+        android:fontFamily="@font/poppins_bold">
+    </Button>
+
+
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:src="@drawable/taskbar">
+    </ImageView>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="49dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/home_icon" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="180dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/document_icon" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/personal_icon" />
+</RelativeLayout>

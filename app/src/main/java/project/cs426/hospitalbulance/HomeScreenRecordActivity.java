@@ -5,18 +5,30 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeScreenRecordActivity extends AppCompatActivity {
+public class HomeScreenRecordActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private FirebaseFirestore db;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +37,36 @@ public class HomeScreenRecordActivity extends AppCompatActivity {
         String username = intent.getStringExtra("username");
         prepareContent(username);
         Button save = findViewById(R.id.save_button);
-        save.setBackgroundColor(Color.parseColor("#C53434"));
+        save.setBackgroundColor(Color.parseColor("#808080"));
 
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
+        // Get Firestore instance
+        db = FirebaseFirestore.getInstance();
+
+        EditText edit = findViewById(R.id.add_body);
+        edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    String content = String.valueOf(edit.getText());
+                    if (!content.isEmpty())
+                    {
+                        Button save = findViewById(R.id.save_button);
+                        save.setBackgroundColor(Color.parseColor("#C53434"));
+                    }
+                    // EditText gained focus
+                } else {
+                    // EditText lost focus
+                    String content = String.valueOf(edit.getText());
+                    if (!content.isEmpty())
+                    {
+                        Button save = findViewById(R.id.save_button);
+                        save.setBackgroundColor(Color.parseColor("#C53434"));
+                    }
+                }
+            }
+        });
 
     }
 
@@ -113,4 +153,16 @@ public class HomeScreenRecordActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if(v == findViewById(R.id.save_button))
+        {
+            //Put to the database and reload the screen
+        }
+        else if(v == findViewById(R.id.home_button))
+        {
+            Intent intent = new Intent(this, HomeScreenHomeActivity.class);
+            this.startActivity(intent);
+        }
+    }
 }

@@ -46,6 +46,10 @@
         <activity
             android:name=".HomeScreenHomeActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".FirstAidCaseActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

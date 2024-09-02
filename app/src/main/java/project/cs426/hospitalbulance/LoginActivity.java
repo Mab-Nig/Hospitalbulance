@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button patientButton, ambulanceButton, hospitalButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,20 +17,25 @@ public class LoginActivity extends AppCompatActivity {
 
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-
-        patientButton = findViewById(R.id.patientButton);
-        ambulanceButton = findViewById(R.id.ambulanceButton);
-        hospitalButton = findViewById(R.id.hospitalButton);
+        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);  // New button
+        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);  // New button
 
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, HomeScreenHomeActivity.class);
             startActivity(intent);
         });
 
-        // Handle the back arrow click
         backArrowButton.setOnClickListener(v -> onBackPressed());
 
-        // Handle the button selections
+        // Handle Facebook login
+        fbLoginButton.setOnClickListener(v -> {
 
+        });
+
+        // Handle Gmail login
+        gmailLoginButton.setOnClickListener(v -> {
+
+        });
     }
+
 }

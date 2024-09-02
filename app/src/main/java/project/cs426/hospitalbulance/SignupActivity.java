@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SignupActivity extends AppCompatActivity {
 
+    private ImageButton patientButton, ambulanceButton, hospitalButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +21,10 @@ public class SignupActivity extends AppCompatActivity {
         Button registerButton = findViewById(R.id.registerButton);
         TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
+
+        patientButton = findViewById(R.id.patientButton);
+        ambulanceButton = findViewById(R.id.ambulanceButton);
+        hospitalButton = findViewById(R.id.hospitalButton);
 
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
@@ -31,5 +37,7 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         backArrowButton.setOnClickListener(v -> onBackPressed());
+
+        // Handle the button selections
     }
 }

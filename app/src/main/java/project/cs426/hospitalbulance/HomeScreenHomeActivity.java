@@ -58,33 +58,6 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         call.setOnClickListener(this);
         findViewById(R.id.cancle_button).setOnClickListener(this);
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getDataAndCall();
-            }
-        }
-    }
-
-    private void getDataAndCall() {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                Toast.makeText(this, "Find your place!", Toast.LENGTH_SHORT).show();
-            currentLong = location.getLongitude();
-            currentLat = location.getLatitude();
-                Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
-                myIntent.putExtra("lat", currentLat); //Optional parameters
-                myIntent.putExtra("long", currentLong);
-                this.startActivity(myIntent);
-        }).addOnFailureListener(this, location -> {
-                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
-            });
-
-    }
-  
         // Set up Fractures button
         ImageButton fracturesButton = findViewById(R.id.fractures_button);
         fracturesButton.setOnClickListener(v -> {
@@ -189,6 +162,31 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
             intent.putExtra("imageResId", R.drawable.radiation);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getDataAndCall();
+            }
+        }
+    }
+
+    private void getDataAndCall() {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                Toast.makeText(this, "Find your place!", Toast.LENGTH_SHORT).show();
+            currentLong = location.getLongitude();
+            currentLat = location.getLatitude();
+                Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
+                myIntent.putExtra("lat", currentLat); //Optional parameters
+                myIntent.putExtra("long", currentLong);
+                this.startActivity(myIntent);
+        }).addOnFailureListener(this, location -> {
+                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
+            });
+
     }
 
     @Override

@@ -57,6 +57,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         ImageButton call = findViewById(R.id.call_button);
         call.setOnClickListener(this);
         findViewById(R.id.cancle_button).setOnClickListener(this);
+        findViewById(R.id.personal_button).setOnClickListener(this);
 
         // Set up Fractures button
         ImageButton fracturesButton = findViewById(R.id.fractures_button);
@@ -228,6 +229,11 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
             ImageView gifImageView = findViewById(R.id.gifImageView);
             gifImageView.setVisibility(View.INVISIBLE);
             //handle stop finding car
+        }
+        else if(v == findViewById(R.id.personal_button))
+        {
+            Intent intent = new Intent(this, HomeScreenPersonalActivity.class);
+            this.startActivity(intent);
         }
     }
 }

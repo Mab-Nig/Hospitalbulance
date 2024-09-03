@@ -62,7 +62,6 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-
         mMap.addMarker(new MarkerOptions().position(currentLocation).title(currentLocation.latitude + ", " + currentLocation.longitude));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
 

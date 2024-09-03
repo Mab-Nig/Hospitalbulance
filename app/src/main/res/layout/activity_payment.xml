@@ -60,7 +60,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src = "@drawable/line">
+            android:src = "@drawable/line_quan">
 
         </ImageView>
         <RadioButton
@@ -111,7 +111,7 @@
          <ImageView
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:src = "@drawable/line">
+             android:src = "@drawable/line_quan">
 
          </ImageView>
 

@@ -64,17 +64,22 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
 
     private void getDataAndCall() {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                Toast.makeText(this, "Find your place!", Toast.LENGTH_SHORT).show();
-            currentLong = location.getLongitude();
-            currentLat = location.getLatitude();
+
+              if(location != null) {
+                  Toast.makeText(this, "Find your place!", Toast.LENGTH_SHORT).show();
+                  currentLong = location.getLongitude();
+                  currentLat = location.getLatitude();
                 Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
                 myIntent.putExtra("lat", currentLat); //Optional parameters
                 myIntent.putExtra("long", currentLong);
-                this.startActivity(myIntent);
-        }).addOnFailureListener(this, location -> {
+                this.startActivity(myIntent);}
+              else
+              {
+                  Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();
+              }
+            }).addOnFailureListener(this, location -> {
                 Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
             });
-
     }
 
 

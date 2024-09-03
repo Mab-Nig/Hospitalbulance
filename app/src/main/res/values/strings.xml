@@ -6,4 +6,7 @@
     <string name="screen1desc">Access essential first aid information and get expert suggestions to handle emergencies right at home, all from your first aid kit.</string>
     <string name="screen2desc">Keep all your medical records organized and easily accessible in one secure place, right at your fingertips.</string>
     <string name="screen3desc">Need help fast? Call an ambulance with just one click—your safety is our priority.</string>
+    <string name="open">Open drawer</string>
+    <string name="close">Close drawer</string>
+
 </resources>

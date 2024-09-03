@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop = "30dp"
+        android:layout_marginLeft = "40dp"
+        android:id = "@+id/back_payment"
+        android:background="@drawable/back_payment">
+
+    </ImageButton>
+    <TextView
+
+        android:id="@+id/payment_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="120dp"
+        android:textSize="10pt"
+        android:text="Payment method"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="#000000">
+
+    </TextView>
+    <RadioGroup
+        android:id="@+id/payment_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/payment_text1"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        android:layoutDirection="rtl">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "vertical"
+            android:gravity="center_horizontal">
+
+
+        <RadioButton
+            android:id="@+id/radio_visa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+
+            android:drawableEnd="@drawable/visa"
+            android:text="Visa"
+            android:checked="false"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:background="#FFFFFF"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src = "@drawable/line_quan">
+
+        </ImageView>
+        <RadioButton
+            android:id="@+id/radio_mastercard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:drawableEnd="@drawable/master"
+            android:text="MasterCard"
+
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:textSize="16sp" />
+
+
+        </LinearLayout>
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/payment_radio_group_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/payment_radio_group"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        android:layoutDirection="rtl">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+        <RadioButton
+            android:id="@+id/radio_cash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawableEnd="@drawable/cash"
+            android:text="Cash"
+            android:checked="false"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:textSize="16sp" />
+
+         <ImageView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:src = "@drawable/line_quan">
+
+         </ImageView>
+
+        <RadioButton
+            android:id="@+id/radio_paypal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:drawableEnd="@drawable/palpay"
+            android:text="Momo"
+            android:checked="false"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:textSize="16sp" />
+        </LinearLayout>
+    </RadioGroup>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd = "40dp"
+        android:layout_marginBottom="10dp"
+        android:src = "@drawable/white_bar">
+
+    </ImageView>
+    <Button
+        android:id="@+id/booking_button"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd = "80dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="#4CAF50"
+        android:enabled="false"
+        android:text="Booking"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+</RelativeLayout>

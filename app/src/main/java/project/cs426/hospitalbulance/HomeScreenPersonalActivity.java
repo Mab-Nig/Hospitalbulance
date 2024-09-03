@@ -1,6 +1,7 @@
 package project.cs426.hospitalbulance;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -42,5 +43,14 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(navigationView);
             }
         });
+        findViewById(R.id.sidebar_image2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeScreenPersonalActivity.this, PaymentActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
     }
 }

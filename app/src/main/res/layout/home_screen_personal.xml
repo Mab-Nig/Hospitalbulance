@@ -83,6 +83,7 @@
         android:textSize="18sp"/>
 
         <TextView
+            android:id = "@+id/blood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Blood Group - O +ve"
@@ -92,6 +93,7 @@
             android:layout_marginTop="8dp"/>
 
         <TextView
+            android:id = "@+id/weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Weight - 65kgs"
@@ -101,6 +103,7 @@
             android:layout_marginTop="4dp"/>
 
         <TextView
+            android:id = "@+id/diabetic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Diabetic - No"
@@ -110,6 +113,7 @@
             android:layout_marginTop="4dp"/>
 
         <TextView
+            android:id = "@+id/allergies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Allergies - None"
@@ -175,7 +179,7 @@
 
 
     <RelativeLayout android:id="@+id/sidebar_layout"
-        android:layout_width="match_parent"
+        android:layout_width="393dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#C53434">
@@ -184,7 +188,7 @@
             android:layout_height="wrap_content"
             android:id = "@+id/back_sidebar"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="40dp"
             android:background="@drawable/icon_back">
         </ImageButton>
 
@@ -193,7 +197,7 @@
             android:layout_height="48dp"
 
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="250dp"
+            android:layout_marginLeft="320dp"
             android:src="@drawable/logo_3_personal" >
 
         </ImageView>
@@ -261,7 +265,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="14dp"
             android:layout_centerInParent="true"
-            android:layout_marginEnd = "110dp"
+            android:layout_marginEnd = "140dp"
             android:background="@drawable/text_delete"
             android:id = "@+id/delete_text"
             />

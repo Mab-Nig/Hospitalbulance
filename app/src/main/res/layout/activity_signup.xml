@@ -44,12 +44,12 @@
         android:layout_marginTop="50dp"
         />
 
-    <!-- Name Field -->
+    <!-- Username Field -->
     <EditText
-        android:id="@+id/nameEditText"
+        android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Name"
+        android:hint="Username"
         android:inputType="textPersonName"
         android:background="@color/white"
         android:padding="10dp"
@@ -59,18 +59,33 @@
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"/>
 
-    <!-- Mobile Number Field -->
+    <!-- Password Field -->
     <EditText
-        android:id="@+id/phoneEditText"
+        android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Mobile Number"
-        android:inputType="phone"
+        android:hint="Password"
+        android:inputType="text"
+        android:background="@color/white"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/usernameEditText"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="16dp"/>
+
+    <!-- Email Field -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
         android:background="@color/white"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendOtpButton"
-        app:layout_constraintTop_toBottomOf="@id/nameEditText"
+        app:layout_constraintTop_toBottomOf="@+id/passwordEditText"
         android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"/>
@@ -84,7 +99,7 @@
         android:backgroundTint="@color/red"
         android:textColor="@color/white"
         app:cornerRadius="15dp"
-        app:layout_constraintTop_toTopOf="@id/phoneEditText"
+        app:layout_constraintTop_toTopOf="@id/emailEditText"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"/>
 
@@ -99,9 +114,51 @@
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneEditText"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"/>
+
+    <!-- Three Selectable Buttons -->
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/otpEditText">
+
+        <ImageButton
+            android:id="@+id/patientButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_patient"
+            android:contentDescription="Patient" />
+
+        <ImageButton
+            android:id="@+id/ambulanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_ambulance"
+            android:contentDescription="Ambulance" />
+
+        <ImageButton
+            android:id="@+id/hospitalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_hospital"
+            android:contentDescription="Hospital" />
+
+    </LinearLayout>
 
     <!-- Register Button -->
     <Button
@@ -109,13 +166,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
+        android:textSize="20sp"
         android:backgroundTint="@color/red"
         android:textColor="@color/white"
         app:cornerRadius="15dp"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/otpEditText"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"/>
 
@@ -125,6 +183,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:text="Have an account already? Log in"
+        android:textSize="15sp"
         android:textColor="@color/red"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/registerButton"

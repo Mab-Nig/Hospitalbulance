@@ -44,106 +44,95 @@
         android:layout_marginTop="50dp"
         />
 
-    <!-- Mobile Number Field -->
+    <!-- Email Field -->
     <EditText
-        android:id="@+id/phoneEditText"
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Mobile Number"
-        android:inputType="phone"
+        android:hint="Email"
+        android:inputType="text"
         android:background="@color/white"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sendOtpButton"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
         android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"/>
 
-    <!-- Send OTP Button -->
-    <Button
-        android:id="@+id/sendOtpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send OTP"
-        android:backgroundTint="@color/red"
-        android:textColor="@color/white"
-        app:cornerRadius="15dp"
-        app:layout_constraintTop_toTopOf="@id/phoneEditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"/>
-
-    <!-- OTP Field -->
+    <!-- Password Field -->
     <EditText
-        android:id="@+id/otpEditText"
+        android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Enter OTP"
-        android:inputType="number"
+        android:hint="Password"
+        android:inputType="text"
         android:background="@color/white"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneEditText"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"/>
-
-    <!-- Three Selectable Buttons -->
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/otpEditText"
-        tools:layout_editor_absoluteX="16dp">
-
-        <Button
-            android:id="@+id/patientButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/red"
-            android:text="Patient" />
-
-        <Button
-            android:id="@+id/ambulanceButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/red"
-            android:text="Ambulance" />
-
-        <Button
-            android:id="@+id/hospitalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/red"
-            android:text="Hospital" />
-
-    </LinearLayout>
 
     <!-- Login Button -->
     <Button
         android:id="@+id/loginButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="48dp"
         android:backgroundTint="@color/red"
         android:padding="10dp"
         android:text="Login"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:cornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
+
+    <!-- "Or login with" Text -->
+    <TextView
+        android:id="@+id/orLoginWithText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Or login with"
+        android:textSize="20sp"
+        android:textColor="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/loginButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"/>
+
+    <!-- Facebook and Gmail Image Buttons -->
+    <LinearLayout
+        android:id="@+id/socialLoginButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/orLoginWithText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <!-- Facebook Image Button -->
+        <ImageButton
+            android:id="@+id/fbLoginButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/fb_logo"
+            android:contentDescription="Login with Facebook"
+            android:layout_marginEnd="96dp"/>
+
+        <!-- Gmail Image Button -->
+        <ImageButton
+            android:id="@+id/gmailLoginButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/gmail_logo"
+            android:contentDescription="Login with Gmail"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

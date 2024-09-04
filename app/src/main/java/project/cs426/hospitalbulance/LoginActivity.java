@@ -12,9 +12,6 @@ import project.cs426.hospitalbulance.backend.Authenticator;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button patientButton, ambulanceButton, hospitalButton, sendOtpButton;
-    private EditText phoneEditText, otpEditText;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +20,12 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
 
-        patientButton = findViewById(R.id.patientButton);
-        ambulanceButton = findViewById(R.id.ambulanceButton);
-        hospitalButton = findViewById(R.id.hospitalButton);
-        sendOtpButton = findViewById(R.id.sendOtpButton);
-        phoneEditText = findViewById(R.id.phoneEditText);
-        otpEditText = findViewById(R.id.otpEditText);
+		Button patientButton = findViewById(R.id.patientButton);
+		Button ambulanceButton = findViewById(R.id.ambulanceButton);
+		Button hospitalButton = findViewById(R.id.hospitalButton);
+		Button sendOtpButton = findViewById(R.id.sendOtpButton);
+        EditText phoneEditText = findViewById(R.id.phoneEditText);
+        EditText otpEditText = findViewById(R.id.otpEditText);
 
         Authenticator auth = new Authenticator().setContext(this);
 

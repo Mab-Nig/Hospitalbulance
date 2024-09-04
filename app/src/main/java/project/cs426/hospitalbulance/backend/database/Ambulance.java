@@ -1,14 +1,14 @@
 package project.cs426.hospitalbulance.backend.database;
 
 public class Ambulance {
-	private String mNumber;
-	private boolean mIsAvailable;
+	private String number;
+	private boolean isAvailable;
 
 	public String getNumber() {
-		return mNumber;
+		return this.number;
 	}
 
 	public boolean isAvailable() {
-		return mIsAvailable;
+		return this.isAvailable;
 	}
 }

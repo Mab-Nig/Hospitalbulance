@@ -1,15 +1,15 @@
 package project.cs426.hospitalbulance.backend.database;
 
 public class User {
-	private String mRole;
+	private String role;
 
 	public User() {}
 
 	public User(String role) {
-		mRole = role;
+		this.role = role;
 	}
 
 	public String getRole() {
-		return mRole;
+		return this.role;
 	}
 }

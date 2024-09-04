@@ -15,10 +15,7 @@ import org.checkerframework.checker.units.qual.A;
 import project.cs426.hospitalbulance.backend.Authenticator;
 
 public class SignupActivity extends AppCompatActivity {
-    private EditText nameEditText, phoneEditText, otpEditText;
-    private Button sendOtpButton;
-
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
@@ -26,10 +23,10 @@ public class SignupActivity extends AppCompatActivity {
         Button registerButton = findViewById(R.id.registerButton);
         TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-        sendOtpButton = findViewById(R.id.sendOtpButton);
-        nameEditText = findViewById(R.id.nameEditText);
-        phoneEditText = findViewById(R.id.phoneEditText);
-        otpEditText = findViewById(R.id.otpEditText);
+		Button sendOtpButton = findViewById(R.id.sendOtpButton);
+		EditText nameEditText = findViewById(R.id.nameEditText);
+        EditText phoneEditText = findViewById(R.id.phoneEditText);
+        EditText otpEditText = findViewById(R.id.otpEditText);
 
         Authenticator auth = new Authenticator().setContext(this);
 

@@ -23,38 +23,38 @@ public class Authenticator {
 	private static final long TIMEOUT_SECONDS = 120L;
 	private static final String TAG = "login";
 
-	private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-	private Context mContext;
-	private String mEmail, mPassword;
+	private final FirebaseAuth auth = FirebaseAuth.getInstance();
+	private Context context;
+	private String email, password;
 
 	public interface OnCompleteListener {
 		void onSuccess();
 		void onFailed();
 	}
-	private OnCompleteListener mOnCompleteListener;
+	private OnCompleteListener onCompleteListener;
 
 	public Authenticator setContext(Context context) {
-		mContext = context;
+		this.context = context;
 		return this;
 	}
 
 	public Authenticator setEmail(String email) {
-		mEmail = email;
+		this.email = email;
 		return this;
 	}
 
 	public Authenticator setPassword(String password) {
-		mPassword = password;
+		this.password = password;
 		return this;
 	}
 
 	public Authenticator setOnCompleteListener(OnCompleteListener listener) {
-		mOnCompleteListener = listener;
+		this.onCompleteListener = listener;
 		return this;
 	}
 
 	public boolean isUserSignedIn() {
-		return mAuth.getCurrentUser() != null;
+		return this.auth.getCurrentUser() != null;
 	}
 
 	public void signUp(String role) {
@@ -65,28 +65,28 @@ public class Authenticator {
 		}
 
 		String finalRole = role;
-		mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
-				.addOnCompleteListener((Activity) mContext, task -> {
+		this.auth.createUserWithEmailAndPassword(this.email, this.password)
+				.addOnCompleteListener((Activity) this.context, task -> {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signUp:success");
 						addUserToDatabase(finalRole);
-						mOnCompleteListener.onSuccess();
+						this.onCompleteListener.onSuccess();
 					} else {
 						Log.w(TAG, "signUp:failure");
-						mOnCompleteListener.onFailed();
+						this.onCompleteListener.onFailed();
 					}
 				});
 	}
 
 	public void signIn() {
-		mAuth.signInWithEmailAndPassword(mEmail, mPassword)
-				.addOnCompleteListener((Activity) mContext, task -> {
+		this.auth.signInWithEmailAndPassword(this.email, this.password)
+				.addOnCompleteListener((Activity) this.context, task -> {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signIn:success");
-						mOnCompleteListener.onSuccess();
+						this.onCompleteListener.onSuccess();
 					} else {
 						Log.w(TAG, "signIn:failure");
-						mOnCompleteListener.onFailed();
+						this.onCompleteListener.onFailed();
 					}
 				});
 	}
@@ -97,7 +97,7 @@ public class Authenticator {
 		roleToCollection.put("hospital", Collections.HOSPITALS);
 		roleToCollection.put("ambulance_owner", Collections.AMBULANCE_OWNERS);
 
-		String currentUserUid = mAuth.getCurrentUser().getUid();
+		String currentUserUid = this.auth.getCurrentUser().getUid();
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		WriteBatch batch = db.batch();
 
@@ -119,7 +119,7 @@ public class Authenticator {
 			break;
 		}
 
-		batch.commit().addOnCompleteListener((Activity) mContext, task -> {
+		batch.commit().addOnCompleteListener((Activity) this.context, task -> {
 			if (task.isSuccessful()) {
 				Log.d(TAG, "addUserToDatabase:success");
 			} else {

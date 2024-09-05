@@ -198,7 +198,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         if (v == findViewById(R.id.document_button)) {
-            String username = "Ronaldo";
+            String username = "user@gmail.com";
             Intent myIntent = new Intent(HomeScreenHomeActivity.this, HomeScreenRecordActivity.class);
             myIntent.putExtra("username", username); // Optional parameters
             this.startActivity(myIntent);

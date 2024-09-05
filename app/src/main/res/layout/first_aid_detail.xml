@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:textColor="@color/red"
                 android:paddingBottom="16dp" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:text="Basic Treatment Plan"
                 android:textSize="18sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:textColor="@color/red"
             android:paddingBottom="8dp" />
 
@@ -61,6 +61,7 @@
                 android:id="@+id/caseContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
                 android:textSize="16sp" />
 
         </LinearLayout>

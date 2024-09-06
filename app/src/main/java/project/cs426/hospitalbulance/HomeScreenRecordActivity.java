@@ -39,9 +39,6 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         Button save = findViewById(R.id.save_button);
         save.setBackgroundColor(Color.parseColor("#808080"));
 
-        // Initialize Firebase
-        FirebaseApp.initializeApp(this);
-        // Get Firestore instance
         db = FirebaseFirestore.getInstance();
 
         EditText edit = findViewById(R.id.add_body);

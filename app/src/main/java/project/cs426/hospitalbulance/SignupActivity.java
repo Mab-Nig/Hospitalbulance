@@ -2,12 +2,15 @@ package project.cs426.hospitalbulance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import project.cs426.hospitalbulance.backend.Authenticator;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -22,13 +25,39 @@ public class SignupActivity extends AppCompatActivity {
         TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
 
-        patientButton = findViewById(R.id.patientButton);
-        ambulanceButton = findViewById(R.id.ambulanceButton);
-        hospitalButton = findViewById(R.id.hospitalButton);
+        this.patientButton = findViewById(R.id.patientButton);
+        this.ambulanceButton = findViewById(R.id.ambulanceButton);
+        this.hospitalButton = findViewById(R.id.hospitalButton);
+        setRoleSelectListener();
+
+        EditText emailEditText = findViewById(R.id.emailEditText);
+        EditText passwordEditText = findViewById(R.id.passwordEditText);
+
+        Authenticator authenticator = new Authenticator().setContext(this);
 
         registerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
-            startActivity(intent);
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                final String msg = "Cannot leave empty fields.";
+                Toast.makeText(SignupActivity.this, msg, Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+
+            authenticator.setEmail(email)
+                    .setPassword(password)
+                    .setOnCompleteListener(new Authenticator.OnCompleteListener() {
+                        @Override
+                        public void onSuccess() {
+                            Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onFailure() {}
+                    })
+                    .signUp(getSelectedRole());
         });
 
         loginTextView.setOnClickListener(v -> {
@@ -37,7 +66,37 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         backArrowButton.setOnClickListener(v -> onBackPressed());
+    }
 
-        // Handle the button selections
+    private void setRoleSelectListener() {
+        this.patientButton.setActivated(true);
+        this.ambulanceButton.setActivated(false);
+        this.hospitalButton.setActivated(false);
+
+        this.patientButton.setOnClickListener(v -> {
+            this.patientButton.setActivated(true);
+            this.ambulanceButton.setActivated(false);
+            this.hospitalButton.setActivated(false);
+        });
+        this.ambulanceButton.setOnClickListener(v -> {
+            this.patientButton.setActivated(false);
+            this.ambulanceButton.setActivated(true);
+            this.hospitalButton.setActivated(false);
+        });
+        this.hospitalButton.setOnClickListener(v -> {
+            this.patientButton.setActivated(false);
+            this.ambulanceButton.setActivated(false);
+            this.hospitalButton.setActivated(true);
+        });
+    }
+
+    private String getSelectedRole() {
+        if (this.patientButton.isActivated()) {
+            return "patient";
+        }
+        if (this.ambulanceButton.isActivated()) {
+            return "ambulance_owner";
+        }
+        return "hospital";
     }
 }

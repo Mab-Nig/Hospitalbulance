@@ -2,31 +2,8 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /calls/{call} {
-    	allow write: if
-      	request.auth != null &&
-        exists(/users/request.resource.data.caller-info.user-id)
-    }
-    
-    match /dispatches/{dispatch} {
-    	function ambulanceExists() {
-      	let owner_id = request.resource.data['ambulance-info']['owner-id'];
-        let id = request.resource.data['ambulance-info'].id;
-        return exists(/'ambulance-owners'/$(owner_id)) &&
-        	exists(/'ambulance-owners'/$(owner_id)/ambulances/$(id))
-      }
-      
-    	allow write: if
-      	exists(/ambulance-owners/request.auth.uid) &&
-      	ambulanceExists() &&
-        exists(/hospitals/request.resource.data.hospital-id) &&
-        exists(/calls/request.resource.data/call-id) &&
-        request.resource.data in ['arriving', 'dispatched', 'completed']
-    }
-    
-    match /users/{user} {
-    	allow write: if
-      	request.resource.data in ['male', 'female']
+    match /{document=**} {
+      allow read, write: if request.auth != null;
     }
   }
 }

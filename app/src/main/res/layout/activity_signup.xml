@@ -134,7 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@drawable/selector_role_button"
             android:src="@drawable/ic_patient"
             android:contentDescription="Patient" />
 
@@ -145,7 +145,7 @@
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@drawable/selector_role_button"
             android:src="@drawable/ic_ambulance"
             android:contentDescription="Ambulance" />
 
@@ -154,7 +154,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@drawable/selector_role_button"
             android:src="@drawable/ic_hospital"
             android:contentDescription="Hospital" />
 

@@ -3,8 +3,16 @@ package project.cs426.hospitalbulance.backend;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
@@ -21,17 +29,24 @@ import project.cs426.hospitalbulance.backend.database.User;
 
 public class Authenticator {
 	private static final long TIMEOUT_SECONDS = 120L;
-	private static final String TAG = "login";
+	private static final String TAG = "authentication";
 
 	private final FirebaseAuth auth = FirebaseAuth.getInstance();
+	private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private Context context;
 	private String email, password;
 
 	public interface OnCompleteListener {
 		void onSuccess();
-		void onFailed();
+		void onFailure();
 	}
 	private OnCompleteListener onCompleteListener;
+
+	public Authenticator() {
+		final String localIp = "192.168.1.5";
+		this.auth.useEmulator(localIp, 9099);
+		this.db.useEmulator(localIp, 8080);
+	}
 
 	public Authenticator setContext(Context context) {
 		this.context = context;
@@ -57,10 +72,10 @@ public class Authenticator {
 		return this.auth.getCurrentUser() != null;
 	}
 
-	public void signUp(String role) {
-		role = role.toLowerCase();
-		if (!Arrays.asList("PATIENT", "HOSPITAL", "AMBULANCE_OWNER").contains(role.toUpperCase())) {
-			Log.w(TAG, "signUp:invalid role " + role);
+	public void signUp(@NonNull String role) {
+		role = role.toUpperCase();
+		if (!Arrays.asList("PATIENT", "HOSPITAL", "AMBULANCE_OWNER").contains(role)) {
+			Log.e(TAG, "signUp:invalid role " + role);
 			return;
 		}
 
@@ -69,12 +84,24 @@ public class Authenticator {
 				.addOnCompleteListener((Activity) this.context, task -> {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signUp:success");
+						FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+						currentUser.sendEmailVerification();
 						addUserToDatabase(finalRole);
 						this.onCompleteListener.onSuccess();
-					} else {
-						Log.w(TAG, "signUp:failure");
-						this.onCompleteListener.onFailed();
+						return;
 					}
+
+					Log.e(TAG, "signUp:failure");
+					try {
+						throw task.getException();
+					} catch (FirebaseAuthWeakPasswordException e) {
+						emitError("signUp", "Weak password: " + e.getReason());
+					} catch (FirebaseAuthInvalidCredentialsException e) {
+						emitError("signUp", "Email malformed.");
+					} catch (FirebaseAuthUserCollisionException e) {
+						emitError("signUp", "Email already in use.");
+					} catch (Exception ignored) {}
+					this.onCompleteListener.onFailure();
 				});
 	}
 
@@ -84,35 +111,46 @@ public class Authenticator {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signIn:success");
 						this.onCompleteListener.onSuccess();
-					} else {
-						Log.w(TAG, "signIn:failure");
-						this.onCompleteListener.onFailed();
+						return;
 					}
+
+					Log.e(TAG, "signIn:failure");
+					try {
+						throw task.getException();
+					} catch (FirebaseAuthInvalidUserException e) {
+						emitError("signIn", "User does not exist.");
+					} catch (FirebaseAuthInvalidCredentialsException e) {
+						emitError("signIn", "Wrong password.");
+					} catch (Exception ignored) {}
+					this.onCompleteListener.onFailure();
 				});
 	}
 
-	private void addUserToDatabase(String role) {
+	public void signOut() {
+		this.auth.signOut();
+	}
+
+	private void addUserToDatabase(@NonNull String role) {
 		final Map<String, String> roleToCollection = new HashMap<>();
-		roleToCollection.put("patient", Collections.PATIENTS);
-		roleToCollection.put("hospital", Collections.HOSPITALS);
-		roleToCollection.put("ambulance_owner", Collections.AMBULANCE_OWNERS);
+		roleToCollection.put("PATIENT", Collections.PATIENTS);
+		roleToCollection.put("HOSPITAL", Collections.HOSPITALS);
+		roleToCollection.put("AMBULANCE_OWNER", Collections.AMBULANCE_OWNERS);
 
 		String currentUserUid = this.auth.getCurrentUser().getUid();
-		FirebaseFirestore db = FirebaseFirestore.getInstance();
-		WriteBatch batch = db.batch();
+		WriteBatch batch = this.db.batch();
 
-		DocumentReference userRef = db.collection(Collections.USERS).document(currentUserUid);
-		batch.set(userRef, new User(role));
+		DocumentReference userRef = this.db.collection(Collections.USERS).document(currentUserUid);
+		batch.set(userRef, new User(role.toLowerCase()));
 
-		DocumentReference roleRef = db.collection(roleToCollection.get(role)).document(currentUserUid);
+		DocumentReference roleRef = this.db.collection(roleToCollection.get(role)).document(currentUserUid);
 		switch (role) {
-		case "patient":
+		case "PATIENT":
 			batch.set(roleRef, new Patient());
 			break;
-		case "hospital":
+		case "HOSPITAL":
 			batch.set(roleRef, new Hospital());
 			break;
-		case "ambulance_owner":
+		case "AMBULANCE_OWNER":
 			batch.set(roleRef, new AmbulanceOwner());
 			break;
 		default:
@@ -123,8 +161,19 @@ public class Authenticator {
 			if (task.isSuccessful()) {
 				Log.d(TAG, "addUserToDatabase:success");
 			} else {
-				Log.w(TAG, "addUserToDatabase:failure");
+				Log.e(TAG, "addUserToDatabase:failure");
+				try {
+					throw task.getException();
+				} catch (Exception e) {
+					Log.e(TAG, "addUserToDatabase:" + e.getMessage());
+				}
 			}
 		});
+	}
+
+	private void emitError(String functionName, String msg) {
+		Log.e(TAG, functionName + ":" + msg);
+		Toast.makeText(this.context, msg, Toast.LENGTH_SHORT)
+				.show();
 	}
 }

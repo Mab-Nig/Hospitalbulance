@@ -1,6 +1,6 @@
 package project.cs426.hospitalbulance.backend.database;
 
-import com.google.type.Date;
+import java.util.Date;
 
 public class PatientInfo {
 	private String name;

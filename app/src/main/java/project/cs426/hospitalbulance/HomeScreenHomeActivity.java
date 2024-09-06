@@ -205,10 +205,10 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
                 }
               else
               {
-                  Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(this, "Can not find your place1!", Toast.LENGTH_SHORT).show();
               }
             }).addOnFailureListener(this, location -> {
-                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
+                Toast.makeText(this, "Can not find your place2!", Toast.LENGTH_SHORT).show();;
             });
     }
 

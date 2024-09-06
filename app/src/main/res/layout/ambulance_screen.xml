@@ -55,9 +55,22 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_fragment_container"
         android:layout_width="350dp"
-        android:layout_height="400dp"
+        android:layout_height="350dp"
         android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_place"
+        android:layout_width="345dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="492dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Your place: "
+        android:textColor="@color/white"
+        android:textSize="8pt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

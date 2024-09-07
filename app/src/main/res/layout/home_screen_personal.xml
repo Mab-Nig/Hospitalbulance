@@ -96,7 +96,7 @@
             android:id = "@+id/weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight - 65kgs"
+            android:text="Weight - 60kgs"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"

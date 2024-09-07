@@ -3,8 +3,10 @@ package project.cs426.hospitalbulance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 import androidx.annotation.Nullable;
@@ -13,8 +15,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class HomeScreenPersonalActivity extends AppCompatActivity {
+    private FirebaseFirestore db;
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     @Override
@@ -24,6 +35,15 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         RelativeLayout navigationView = findViewById(R.id.sidebar_layout);
+        // Initialize Firebase
+        // Initialize Firebase if it hasn't been initialized yet
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseApp.initializeApp(getApplicationContext());
+        }
+
+// Get Firestore instance
+        db = FirebaseFirestore.getInstance();
+
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -51,6 +71,63 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        prepareContext("user@gmail.com");
 
+    }
+    private void prepareContext(String username)
+    {
+        TextView blood = findViewById(R.id.blood);
+        TextView weight = findViewById(R.id.weight);
+        TextView diabetic = findViewById(R.id.diabetic);
+        TextView allergies = findViewById(R.id.allergies);
+        readData(username,blood,weight,diabetic,allergies);
+    }
+    private void readData(String username,TextView blood,TextView weight,TextView diabetic,TextView allergies)
+    {
+
+        CollectionReference usersRef = db.collection("users");
+        usersRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+            {
+                Log.d("Firestore",":InsideReadData");
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    // Access the 'general-info' map
+                    Map<String, Object> medicalInfo = (Map<String, Object>) document.get("medical-info");
+                    // Access the 'login-info' map
+                    Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
+                    Map<String, Object>  generalInfo = (Map<String, Object>) document.get("general-info");
+
+                    if (loginInfo != null) {
+                        // Example: Access fields in 'login-info' map
+                        String username_get = (String) loginInfo.get("username");
+                        // Check and use the data
+                        if (username_get != null ) {
+                            Log.d("Firestore", "User ID: " + document.getId() +
+                                    " Username: " + username_get);
+                            if (username_get.equals(username)) {
+                                if (medicalInfo != null) {
+
+                                    Number fallen = (Number) medicalInfo.get("fallen-cnt");
+                                    boolean diabeticType = (boolean) medicalInfo.get("is-diabetic");
+                                }
+                                if(generalInfo != null)
+                                {
+                                    String bloodType = (String) generalInfo.get("blood-type");
+
+                                    Number weightNum = (Number) generalInfo.get("weight");
+                                    weight.setText("Weight-" + String.valueOf(weightNum) + "kg");
+                                    Log.d("Weight","Success"+ weightNum);
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                Log.e("Firestore", "Error getting documents: ", task.getException());
+            }
+        });
     }
 }

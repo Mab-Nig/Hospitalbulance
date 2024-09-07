@@ -4,33 +4,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-
 import android.widget.ImageView;
 import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
@@ -41,8 +30,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeScreenHomeActivity extends AppCompatActivity implements View.OnClickListener {
-
-
     private FusedLocationProviderClient fusedLocationClient;
     private final int LOCATION_REQUEST_CODE = 1000;
 
@@ -63,7 +50,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.home_screen_home);
 
         // Set up Cancel button
-        Button cancel = findViewById(R.id.cancle_button);
+        Button cancel = findViewById(R.id.cancel_button);
         cancel.setTextColor(Color.parseColor("#FFFFFF"));
         cancel.setBackgroundColor(Color.parseColor("#C53434"));
 
@@ -73,7 +60,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
 
         ImageButton call = findViewById(R.id.call_button);
         call.setOnClickListener(this);
-        findViewById(R.id.cancle_button).setOnClickListener(this);
+        findViewById(R.id.cancel_button).setOnClickListener(this);
         findViewById(R.id.personal_button).setOnClickListener(this);
 
         // Set up Fractures button
@@ -193,23 +180,23 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     }
 
     private void getDataAndCall() {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
 
-              if(location != null) {
-                  Toast.makeText(this, "Find your place! ", Toast.LENGTH_SHORT).show();
+            if(location != null) {
+                Toast.makeText(this, "Find your place! ", Toast.LENGTH_SHORT).show();
 
-                  currentLong = location.getLongitude();
-                  currentLat = location.getLatitude();
+                currentLong = location.getLongitude();
+                currentLat = location.getLatitude();
 
-                  getPlaceIdFromLocation(location);
-                }
-              else
-              {
-                  Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();
-              }
-            }).addOnFailureListener(this, location -> {
-                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
-            });
+                getPlaceIdFromLocation(location);
+            }
+            else
+            {
+                Toast.makeText(this, "Can not find your place1!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(this, location -> {
+            Toast.makeText(this, "Can not find your place2!", Toast.LENGTH_SHORT).show();;
+        });
     }
 
     @Override
@@ -238,10 +225,10 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
                     ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             } else {
-                    getDataAndCall();
+                getDataAndCall();
             }
         }
-        else if(v == findViewById(R.id.cancle_button))
+        else if(v == findViewById(R.id.cancel_button))
         {
             ImageView gifImageView = findViewById(R.id.gifImageView);
             gifImageView.setVisibility(View.INVISIBLE);

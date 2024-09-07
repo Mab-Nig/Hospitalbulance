@@ -1,10 +1,12 @@
 package project.cs426.hospitalbulance.backend.database;
 
+import com.google.firebase.firestore.PropertyName;
+
 import java.util.List;
 
 public class AmbulanceOwner {
+	@PropertyName("maps_id")
 	private String mapsId;
-	private List<Ambulance> ambulances;
 
 	public String getMapsId() {
 		return this.mapsId;

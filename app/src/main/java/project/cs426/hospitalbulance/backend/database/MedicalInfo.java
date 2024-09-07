@@ -1,11 +1,17 @@
 package project.cs426.hospitalbulance.backend.database;
 
+import com.google.firebase.firestore.PropertyName;
+
 import java.util.List;
 import java.util.Map;
 
 public class MedicalInfo {
 	private List<String> symptoms, medications;
-	private Map<String, Object> bodyMeasurements, other;
+
+	@PropertyName("body_measurements")
+	private Map<String, Object> bodyMeasurements;
+
+	private Map<String, Object> other;
 
 	public List<String> getSymptoms() {
 		return this.symptoms;

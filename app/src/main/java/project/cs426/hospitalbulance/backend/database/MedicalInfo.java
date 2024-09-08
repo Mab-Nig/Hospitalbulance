@@ -9,9 +9,9 @@ public class MedicalInfo {
 	private List<String> symptoms, medications;
 
 	@PropertyName("body_measurements")
-	private Map<String, Object> bodyMeasurements;
+	private BodyMeasurements bodyMeasurements;
 
-	private Map<String, Object> other;
+	private OtherMedicalInfo other;
 
 	public List<String> getSymptoms() {
 		return this.symptoms;
@@ -21,11 +21,11 @@ public class MedicalInfo {
 		return this.medications;
 	}
 
-	public Map<String, Object> getBodyMeasurements() {
+	public BodyMeasurements getBodyMeasurements() {
 		return this.bodyMeasurements;
 	}
 
-	public Map<String, Object> getOther() {
+	public OtherMedicalInfo getOther() {
 		return this.other;
 	}
 }

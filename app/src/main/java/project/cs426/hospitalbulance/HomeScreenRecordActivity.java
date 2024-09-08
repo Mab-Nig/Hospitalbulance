@@ -25,6 +25,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import project.cs426.hospitalbulance.backend.database.Collections;
+import project.cs426.hospitalbulance.backend.database.OtherMedicalInfo;
 import project.cs426.hospitalbulance.backend.database.Patient;
 
 public class HomeScreenRecordActivity extends AppCompatActivity implements View.OnClickListener {
@@ -47,17 +51,19 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
-        prepareContent(username);
-        Button save = findViewById(R.id.save_button);
+		try {
+			prepareContent(username);
+		} catch (Exception ignored) {}
+		Button save = findViewById(R.id.save_button);
         save.setBackgroundColor(Color.parseColor("#808080"));
 
         EditText edit = findViewById(R.id.add_body);
         edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    String content = String.valueOf(edit.getText());
-                    if (!content.isEmpty())
+				String content = String.valueOf(edit.getText());
+				if (hasFocus) {
+					if (!content.isEmpty())
                     {
                         Button save = findViewById(R.id.save_button);
                         save.setBackgroundColor(Color.parseColor("#C53434"));
@@ -65,8 +71,7 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
                     // EditText gained focus
                 } else {
                     // EditText lost focus
-                    String content = String.valueOf(edit.getText());
-                    if (!content.isEmpty())
+					if (!content.isEmpty())
                     {
                         Button save = findViewById(R.id.save_button);
                         save.setBackgroundColor(Color.parseColor("#C53434"));
@@ -76,7 +81,8 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         });
     }
 
-    private void prepareContent(String username) {
+    private void prepareContent(String username)
+            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 		RecyclerView bodyDetail = findViewById(R.id.body_measure);
 		RecyclerView medicationDetail = findViewById(R.id.medications);
 		RecyclerView symptomDetail = findViewById(R.id.symptoms);
@@ -126,15 +132,8 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
 
     private List<String> readBodyMeasurements(@NonNull Patient patient) {
         List<String> results = new ArrayList<>();
-        Map<String, Object> bodyMeasurements = patient.getMedicalInfo()
-                .getBodyMeasurements();
-        for (Map.Entry<String, Object> entry : bodyMeasurements.entrySet()) {
-            String[] keyNames = entry.getKey().split("_");
-            for (int i = 0; i < keyNames.length; ++i) {
-                keyNames[i] = StringUtils.capitalize(keyNames[i]);
-            }
-            results.add(String.join(" ", keyNames) + " - " + entry.getValue().toString());
-        }
+        results.add("Weight - " + patient.getMedicalInfo().getBodyMeasurements().getWeight());
+        results.add("Height - " + patient.getMedicalInfo().getBodyMeasurements().getHeight());
         return results;
     }
 
@@ -146,33 +145,60 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         return patient.getMedicalInfo().getSymptoms();
     }
 
-    private List<String> readOtherData(@NonNull Patient patient) {
+    private List<String> readOtherData(@NonNull Patient patient)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        final Map<String, String> fieldToDisplay = new HashMap<>();
+        fieldToDisplay.put("alcoholAssumption", "Alcohol Assumption");
+        fieldToDisplay.put("isInhalerUsed", "Inhaler Usage");
+        fieldToDisplay.put("isDiabetic", "Diabetic");
+        fieldToDisplay.put("fallenCnt", "Number of Times Fallen");
+        fieldToDisplay.put("allergies", "Allergies");
+        fieldToDisplay.put("specialAbilities", "Special Abilities");
+
+        final OtherMedicalInfo other = patient.getMedicalInfo().getOther();
+
         List<String> results = new ArrayList<>();
-        Map<String, Object> other = patient.getMedicalInfo().getOther();
-        for (Map.Entry<String, Object> entry : other.entrySet()) {
-            String fieldName;
-            if (entry.getKey().equals("fallen_cnt")) {
-                fieldName = "Number of Times Fallen";
-            } else {
-                String[] keyNames = entry.getKey().split("_");
-                for (int i = 0; i < keyNames.length; ++i) {
-                    keyNames[i] = StringUtils.capitalize(keyNames[i]);
-                }
-                fieldName = String.join(" ", keyNames);
-            }
-            results.add(fieldName + " - " + entry.getValue().toString());
+        for (Field field : other.getClass().getDeclaredFields()) {
+            String getterName = "get" + StringUtils.capitalize(field.getName());
+            Method getterMethod = other.getClass().getMethod(getterName);
+            results.add(fieldToDisplay.get(field.getName())
+                    + otherFieldValueToString(getterMethod.invoke(other)));
         }
         return results;
     }
 
+    private String otherFieldValueToString(@NonNull Object value) {
+        if (value instanceof Boolean) {
+            if ((boolean) value) {
+                return "Yes";
+            }
+            return "No";
+        }
+
+        if (value instanceof Integer) {
+            return value.toString();
+        }
+
+        if (value instanceof String) {
+            return StringUtils.capitalize(value.toString());
+        }
+
+        if (value instanceof List) {
+            List<Object> valueList = (List<Object>) value;
+            List<String> valueString = new ArrayList<>(valueList.size());
+            for (int i = 0; i < valueString.size(); ++i) {
+                valueString.set(i, valueList.get(i).toString());
+            }
+            return String.join(", ", valueString);
+        }
+        return "";
+    }
+
     @Override
     public void onClick(View v) {
-        if(v == findViewById(R.id.save_button))
-        {
+        if(v == findViewById(R.id.save_button)) {
             //Input update data (change and new data) to the database and reload the screen
-        }
-        else if(v == findViewById(R.id.home_button))
-        {
+        } else if(v == findViewById(R.id.home_button)) {
             Intent intent = new Intent(this, HomeScreenHomeActivity.class);
             this.startActivity(intent);
         }

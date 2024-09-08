@@ -52,7 +52,19 @@
             android:exported="true" />
 
         <activity
+            android:name=".WelcomeScreen"
+            android:exported="true" />
+
+        <activity
             android:name=".SignupActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".AmbulanceRegistrationActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".HospitalRegistrationActivity"
             android:exported="true" />
 
         <activity

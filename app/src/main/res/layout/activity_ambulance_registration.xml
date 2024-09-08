@@ -44,18 +44,33 @@
         android:layout_marginTop="50dp"
         />
 
-    <!-- Name Field -->
+    <!-- Ambulance Service Name Field -->
     <EditText
-        android:id="@+id/nameEditText"
+        android:id="@+id/ambulancenameEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Name"
-        android:inputType="textPersonName"
+        android:hint="Ambulance Service Name"
+        android:inputType="textCapWords"
         android:background="@color/white"
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="16dp"/>
+
+    <!-- Ambulance Service Address Field -->
+    <EditText
+        android:id="@+id/ambulanceaddressEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Ambulance Service Address"
+        android:inputType="textPostalAddress"
+        android:background="@color/white"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ambulancenameEditText"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"/>
 
@@ -70,7 +85,7 @@
         android:padding="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendOtpButton"
-        app:layout_constraintTop_toBottomOf="@+id/nameEditText"
+        app:layout_constraintTop_toBottomOf="@+id/ambulanceaddressEditText"
         android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"/>

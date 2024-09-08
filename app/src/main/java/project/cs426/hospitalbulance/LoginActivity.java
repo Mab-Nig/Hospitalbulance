@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,8 +33,8 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);  // New button
-        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);  // New button
+        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
+        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);
 
         loginButton.setOnClickListener(v -> loginUser());
 

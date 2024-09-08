@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,9 +31,14 @@ public class HospitalRegistrationActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
+        TextView loginTextView = findViewById(R.id.loginTextView);
 
         backArrowButton.setOnClickListener(v -> onBackPressed());
 
+        loginTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(HospitalRegistrationActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(v -> createNewAccount("hospital"));
@@ -47,7 +53,7 @@ public class HospitalRegistrationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     if (userType.equals("hospital")) {
-                        Intent intent = new Intent(HospitalRegistrationActivity.this, HomeScreenHomeActivity.class);
+                        Intent intent = new Intent(HospitalRegistrationActivity.this, HospitalHomeScreen.class);
                         startActivity(intent);
                         finish();
                     }

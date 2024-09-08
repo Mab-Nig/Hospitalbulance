@@ -112,12 +112,30 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
 
                                     Number fallen = (Number) medicalInfo.get("fallen-cnt");
                                     boolean diabeticType = (boolean) medicalInfo.get("is-diabetic");
+                                    if(diabeticType)
+                                    {
+                                        diabetic.setText("Diabetic - Yes");
+                                    }
+                                    else
+                                    {
+                                        diabetic.setText("Diabetic - No");
+                                    }
+
+                                    if(fallen.intValue() > 0)
+                                    {
+                                        allergies.setText("Allergies - " +String.valueOf(fallen));
+                                    }
+                                    else
+                                    {
+                                        allergies.setText("Allergies - None");
+                                    }
                                 }
                                 if (generalInfo != null) {
                                     String bloodType = (String) generalInfo.get("blood-type");
-
+                                    blood.setText("Blood Group - " + bloodType + " +ve");
+                                    Log.d("Blood", "Success" + bloodType);
                                     Number weightNum = (Number) generalInfo.get("weight");
-                                    weight.setText("Weight-" + String.valueOf(weightNum) + "kg");
+                                    weight.setText("Weight - " + String.valueOf(weightNum) + " kgs");
                                     Log.d("Weight", "Success" + weightNum);
                                 }
 

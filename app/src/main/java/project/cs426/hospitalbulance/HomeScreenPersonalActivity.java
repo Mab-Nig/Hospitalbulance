@@ -50,7 +50,6 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeScreenPersonalActivity.this, PaymentActivity.class);
-
                 startActivity(intent);
             }
         });

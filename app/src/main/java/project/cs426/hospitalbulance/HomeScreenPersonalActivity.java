@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeScreenPersonalActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -52,5 +55,21 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             }
         });
 
+        addSignOutListener();
+    }
+
+    public void logoutClicked(View view) {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    private void addSignOutListener() {
+        FirebaseAuth.IdTokenListener signOutListener = auth -> {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser == null) {
+                Intent intent = new Intent(HomeScreenPersonalActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        };
+        FirebaseAuth.getInstance().addIdTokenListener(signOutListener);
     }
 }

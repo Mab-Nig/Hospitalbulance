@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -28,6 +30,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,36 +75,36 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             }
         });
         prepareContext("user@gmail.com");
-
+        ImageButton logoutButton = findViewById(R.id.sidebar_image3);
+        logoutButton.setOnClickListener(v -> showLogoutConfirmationDialog());
     }
-    private void prepareContext(String username)
-    {
+
+    private void prepareContext(String username) {
         TextView blood = findViewById(R.id.blood);
         TextView weight = findViewById(R.id.weight);
         TextView diabetic = findViewById(R.id.diabetic);
         TextView allergies = findViewById(R.id.allergies);
-        readData(username,blood,weight,diabetic,allergies);
+        readData(username, blood, weight, diabetic, allergies);
     }
-    private void readData(String username,TextView blood,TextView weight,TextView diabetic,TextView allergies)
-    {
+
+    private void readData(String username, TextView blood, TextView weight, TextView diabetic, TextView allergies) {
 
         CollectionReference usersRef = db.collection("users");
         usersRef.get().addOnCompleteListener(task -> {
-            if(task.isSuccessful())
-            {
-                Log.d("Firestore",":InsideReadData");
+            if (task.isSuccessful()) {
+                Log.d("Firestore", ":InsideReadData");
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     // Access the 'general-info' map
                     Map<String, Object> medicalInfo = (Map<String, Object>) document.get("medical-info");
                     // Access the 'login-info' map
                     Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
-                    Map<String, Object>  generalInfo = (Map<String, Object>) document.get("general-info");
+                    Map<String, Object> generalInfo = (Map<String, Object>) document.get("general-info");
 
                     if (loginInfo != null) {
                         // Example: Access fields in 'login-info' map
                         String username_get = (String) loginInfo.get("username");
                         // Check and use the data
-                        if (username_get != null ) {
+                        if (username_get != null) {
                             Log.d("Firestore", "User ID: " + document.getId() +
                                     " Username: " + username_get);
                             if (username_get.equals(username)) {
@@ -110,13 +113,12 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                                     Number fallen = (Number) medicalInfo.get("fallen-cnt");
                                     boolean diabeticType = (boolean) medicalInfo.get("is-diabetic");
                                 }
-                                if(generalInfo != null)
-                                {
+                                if (generalInfo != null) {
                                     String bloodType = (String) generalInfo.get("blood-type");
 
                                     Number weightNum = (Number) generalInfo.get("weight");
                                     weight.setText("Weight-" + String.valueOf(weightNum) + "kg");
-                                    Log.d("Weight","Success"+ weightNum);
+                                    Log.d("Weight", "Success" + weightNum);
                                 }
 
 
@@ -124,10 +126,28 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }
-            else{
+            } else {
                 Log.e("Firestore", "Error getting documents: ", task.getException());
             }
         });
+    }
+
+    private void showLogoutConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeScreenPersonalActivity.this);
+        builder.setTitle("Confirm Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setCancelable(true)
+                .setPositiveButton("Logout", (dialog, id) -> {
+                    Intent intent = new Intent(HomeScreenPersonalActivity.this,SignupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                    dialog.dismiss();
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

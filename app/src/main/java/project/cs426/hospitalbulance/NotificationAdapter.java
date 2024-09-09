@@ -5,10 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
@@ -33,7 +31,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notification notification = notificationList.get(position);
-        holder.typeOfEmergency.setText(notification.getTypeOfEmergency());
+        holder.typeOfEmergency.setText(notification.getCaseType());
         holder.address.setText(notification.getAddress());
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(notification));

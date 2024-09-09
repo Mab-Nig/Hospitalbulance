@@ -1,100 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@color/white">
 
-    <!-- Back Arrow Button -->
-    <ImageButton
-        android:id="@+id/backArrowButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_arrow_back"
-        android:contentDescription="Back"
-        android:padding="16dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
-    <!-- Patient's Name -->
-    <TextView
-        android:id="@+id/patientName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Patient's Name: John Doe"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/backArrowButton"
-        android:layout_marginTop="16dp"
-        />
-
-    <!-- Patient's Age -->
-    <TextView
-        android:id="@+id/patientAge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Age: 30"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/patientName"
-        android:layout_marginTop="8dp" />
-
-    <!-- Patient's Sex -->
-    <TextView
-        android:id="@+id/patientSex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sex: Male"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/patientAge"
-        android:layout_marginTop="8dp" />
-
-    <!-- Accident Type -->
-    <TextView
-        android:id="@+id/accidentType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Type of Accident: Car Accident"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/patientSex"
-        android:layout_marginTop="8dp" />
-
-    <!-- Ambulance Service -->
-    <TextView
-        android:id="@+id/ambulanceService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ambulance Service: ABC Ambulance"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/accidentType"
-        android:layout_marginTop="8dp" />
-
-    <!-- Current Status -->
-    <TextView
-        android:id="@+id/currentStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Current Status: Critical"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/ambulanceService"
-        android:layout_marginTop="8dp" />
-
-    <!-- Accept Button -->
-    <Button
-        android:id="@+id/acceptButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accept"
-        android:textSize="20sp"
-        android:backgroundTint="@color/red"
-        android:textColor="@color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:padding="10dp" />
-</RelativeLayout>
+        android:orientation="vertical">
+
+        <!-- Back Arrow and Title -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <!-- Back Arrow -->
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_alignParentStart="true"
+                android:contentDescription="Back"
+                android:layout_alignParentLeft="true"/>
+
+            <!-- Detail Information Title -->
+            <TextView
+                android:id="@+id/detailInfoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detail Information"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+        </RelativeLayout>
+
+        <!-- Curved Card for Information -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/dispatchId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Dispatch ID"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/caseType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Case"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Address"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/ambulanceId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ambulance ID"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/ownerId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Owner ID"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/callId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Call ID"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/hospitalId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hospital ID"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Timestamp"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Accept Button -->
+        <Button
+            android:id="@+id/acceptButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:textSize="20sp"
+            android:fontFamily="@font/poppins_regular"
+            android:backgroundTint="@color/red"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp"
+            android:padding="10dp" />
+    </LinearLayout>
+</ScrollView>

@@ -22,7 +22,7 @@ public class HospitalRecordScreen extends AppCompatActivity {
         // Use the shared recordList to display the records
         adapter = new NotificationAdapter(this, HospitalHomeScreen.recordList, notification -> {
             Intent intent = new Intent(HospitalRecordScreen.this, EmergencyDetail.class);
-            intent.putExtra("notification", notification);
+            intent.putExtra("dispatchId", notification.getDispatchId());
             intent.putExtra("isFromRecord", true);  // Mark that this is coming from the record screen
             startActivity(intent);
         });

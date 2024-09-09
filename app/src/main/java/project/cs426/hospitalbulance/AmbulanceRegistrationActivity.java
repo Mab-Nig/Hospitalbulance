@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignupActivity extends AppCompatActivity {
+public class AmbulanceRegistrationActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private FirebaseAuth mAuth;
@@ -24,24 +24,24 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_ambulance_registration);
 
         mAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        Button registerButton = findViewById(R.id.registerButton);
-        TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
+        TextView loginTextView = findViewById(R.id.loginTextView);
 
-        registerButton.setOnClickListener(v -> createNewAccount("patient"));
+        backArrowButton.setOnClickListener(v -> onBackPressed());
 
         loginTextView.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+            Intent intent = new Intent(AmbulanceRegistrationActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
-        backArrowButton.setOnClickListener(v -> onBackPressed());
+        Button registerButton = findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(v -> createNewAccount("ambulance"));
     }
 
     private void createNewAccount(String userType) {
@@ -52,13 +52,13 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    if (userType.equals("patient")) {
-                        Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
+                    if (userType.equals("ambulance")) {
+                        Intent intent = new Intent(AmbulanceRegistrationActivity.this, HomeScreenHomeActivity.class);
                         startActivity(intent);
                         finish();
                     }
                 } else {
-                    Toast.makeText(SignupActivity.this, "Failed to create account: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(AmbulanceRegistrationActivity.this, "Failed to create account: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

@@ -76,10 +76,8 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             }
         });
         prepareContext("user@gmail.com");
-        ImageButton logoutButton = findViewById(R.id.sidebar_image3);
-        logoutButton.setOnClickListener(v -> showLogoutConfirmationDialog());
-        ImageButton editButton = findViewById(R.id.sidebar_image1);
-        editButton.setOnClickListener(v -> {
+        findViewById(R.id.sidebar_image3).setOnClickListener(v -> showLogoutConfirmationDialog());
+        findViewById(R.id.sidebar_image1).setOnClickListener(v -> {
             Intent intent = new Intent(HomeScreenPersonalActivity.this, EditInfo.class);
             startActivity(intent);
         });

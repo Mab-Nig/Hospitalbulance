@@ -228,6 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:id="@+id/sidebar_image1"
                 android:onClick="editInformationClicked"> <!-- Clickable action -->
 
                 <ImageView
@@ -279,6 +280,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:id="@+id/sidebar_image3"
                 android:onClick="logoutClicked">
 
                 <ImageView

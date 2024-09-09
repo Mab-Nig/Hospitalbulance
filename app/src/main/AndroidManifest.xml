@@ -70,6 +70,9 @@
         <activity android:name=".ambulanceScreenActivity"
             android:exported="true"/>
 
+        <activity android:name=".HomeScreenHomeDriverActivity"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

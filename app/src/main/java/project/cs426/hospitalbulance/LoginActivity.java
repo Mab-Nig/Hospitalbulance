@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     // Login successful, navigate to home screen
-                    Intent intent = new Intent(LoginActivity.this, HomeScreenHomeActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
                     startActivity(intent);
                     finish();
                 } else {

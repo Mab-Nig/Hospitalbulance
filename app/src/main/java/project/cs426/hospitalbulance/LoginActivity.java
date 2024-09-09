@@ -19,8 +19,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);  // New button
-        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);  // New button
+        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
+        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);
         EditText emailEditText = findViewById(R.id.emailEditText);
         EditText passwordEditText = findViewById(R.id.passwordEditText);
         autoFillLogin(emailEditText, passwordEditText);

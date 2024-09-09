@@ -106,8 +106,6 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
 
         //read sympton
         readSympton(username, details2);
-        DetailRecordAdapter adapter2 = new DetailRecordAdapter(details2);
-        symptonDetail.setAdapter(adapter2);
 
         //read other data
         readotherData(username, details3);

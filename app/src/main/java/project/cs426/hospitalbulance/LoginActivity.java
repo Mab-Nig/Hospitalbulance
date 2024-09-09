@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+                    // Login successful, navigate to home screen
                     // Fetch the user's role from Firestore
                     checkUserRole(email);
                 } else {
@@ -120,7 +121,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                 case "ambulance":
                                     // Handle ambulance case later
-                                    Toast.makeText(LoginActivity.this, "Ambulance feature coming soon!", Toast.LENGTH_SHORT).show();
+                                    Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    startActivity(ambulanceIntent);
+                                    finish();
                                     break;
 
                                 default:

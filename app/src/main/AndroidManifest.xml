@@ -32,6 +32,7 @@
 
          
             android:exported="true" />
+
         <activity
             android:name=".SplashScreen"
             android:exported="true">
@@ -76,7 +77,8 @@
 
         <activity android:name=".ambulanceScreenActivity"
             android:exported="true"/>
-
+        <activity android:name=".EditInfo"
+            android:exported="true"/>
     </application>
 
 </manifest>

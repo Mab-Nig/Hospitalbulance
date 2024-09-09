@@ -121,8 +121,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 case "ambulance":
                                     // Handle ambulance case later
-                                    Intent hospitalIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
-                                    startActivity(hospitalIntent);
+                                    Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    startActivity(ambulanceIntent);
                                     finish();
                                     break;
 

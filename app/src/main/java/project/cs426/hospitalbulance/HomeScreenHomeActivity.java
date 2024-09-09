@@ -3,6 +3,7 @@ package project.cs426.hospitalbulance;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,14 +32,30 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class HomeScreenHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private FusedLocationProviderClient fusedLocationClient;
     private final int LOCATION_REQUEST_CODE = 1000;
 
+
     private double currentLat;
     private double currentLong;
+
+    private static final String BASE_URL = "https://maps.googleapis.com/maps/api/";
+    private static final String TAG = "Directions";
+
+    private String USER_PLACE_ID;
+
+    private static final String API_KEY = "AIzaSyAI1QP38yYGgMKA2z32ANGztqmd518Pf1Q";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +74,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         ImageButton call = findViewById(R.id.call_button);
         call.setOnClickListener(this);
         findViewById(R.id.cancle_button).setOnClickListener(this);
+        findViewById(R.id.personal_button).setOnClickListener(this);
 
         // Set up Fractures button
         ImageButton fracturesButton = findViewById(R.id.fractures_button);
@@ -184,23 +202,28 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
 
     private void getDataAndCall() {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                Toast.makeText(this, "Find your place!", Toast.LENGTH_SHORT).show();
-            currentLong = location.getLongitude();
-            currentLat = location.getLatitude();
-                Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
-                myIntent.putExtra("lat", currentLat); //Optional parameters
-                myIntent.putExtra("long", currentLong);
-                this.startActivity(myIntent);
-        }).addOnFailureListener(this, location -> {
-                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
-            });
 
+              if(location != null) {
+                  Toast.makeText(this, "Find your place! ", Toast.LENGTH_SHORT).show();
+
+                  currentLong = location.getLongitude();
+                  currentLat = location.getLatitude();
+
+                  getPlaceIdFromLocation(location);
+                }
+              else
+              {
+                  Toast.makeText(this, "Can not find your place1!", Toast.LENGTH_SHORT).show();
+              }
+            }).addOnFailureListener(this, location -> {
+                Toast.makeText(this, "Can not find your place2!", Toast.LENGTH_SHORT).show();;
+            });
     }
 
     @Override
     public void onClick(View v) {
         if (v == findViewById(R.id.document_button)) {
-            String username = "Ronaldo";
+            String username = "user@gmail.com";
             Intent myIntent = new Intent(HomeScreenHomeActivity.this, HomeScreenRecordActivity.class);
             myIntent.putExtra("username", username); // Optional parameters
             this.startActivity(myIntent);
@@ -232,5 +255,52 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
             gifImageView.setVisibility(View.INVISIBLE);
             //handle stop finding car
         }
+        else if(v == findViewById(R.id.personal_button))
+        {
+            Intent intent = new Intent(this, HomeScreenPersonalActivity.class);
+            this.startActivity(intent);
+        }
+    }
+
+    private void getPlaceIdFromLocation(Location location) {
+        String latLng = location.getLatitude() + "," + location.getLongitude();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        PlacesService service = retrofit.create(PlacesService.class);
+        Call<PlacesResponse> call = service.getNearbyPlaces(latLng, 50, API_KEY); // Radius 50 meters
+
+        call.enqueue(new Callback<PlacesResponse>() {
+            @Override
+            public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Result> results = response.body().results;
+                    if (!results.isEmpty()) {
+                        String placeId = results.get(0).place_id; // Get the first result's Place ID
+                        Log.d(TAG, "Place ID: " + placeId);
+                        USER_PLACE_ID = placeId;
+                        Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
+                        myIntent.putExtra("placeID", USER_PLACE_ID);
+                        myIntent.putExtra("PlaceName", results.get(0).name);
+                        myIntent.putExtra("lat", currentLat); //Optional parameters
+                        myIntent.putExtra("long", currentLong);
+                        startActivity(myIntent);
+                        // Use the place ID as needed
+                    } else {
+                        Log.e(TAG, "No places found near the location.");
+                    }
+                } else {
+                    Log.e(TAG, "Failed to get places: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlacesResponse> call, Throwable t) {
+                Log.e(TAG, "Error fetching places: " + t.getMessage());
+            }
+        });
     }
 }

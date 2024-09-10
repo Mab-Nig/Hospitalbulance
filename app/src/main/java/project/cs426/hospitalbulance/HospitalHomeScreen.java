@@ -56,8 +56,10 @@ public class HospitalHomeScreen extends AppCompatActivity {
             } else if (itemId == R.id.record) {
                 startActivity(new Intent(HospitalHomeScreen.this, HospitalRecordScreen.class));
                 return true;
-            }
-
+            } else if (itemId == R.id.editinfo) {
+            startActivity(new Intent(HospitalHomeScreen.this, HospitalEditInfo.class));
+            return true;
+        }
             return false;
         });
     }
@@ -65,18 +67,23 @@ public class HospitalHomeScreen extends AppCompatActivity {
     // Method to fetch notifications from Firestore
     private void fetchNotifications() {
         db.collection("dispatches")
+                .whereEqualTo("accepted", "no")  // Only fetch notifications where accepted = no
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         notificationList.clear();  // Clear the list before adding new data
                         for (DocumentSnapshot document : task.getResult()) {
+                            // Safely extract fields
+                            Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
+                            if (ambulanceInfo == null) continue;
+
                             Notification notification = new Notification(
                                     document.getString("case"),
                                     document.getString("address"),
-                                    ((Map<String, Object>) document.get("ambulance-info")).get("id").toString(),
-                                    ((Map<String, Object>) document.get("ambulance-info")).get("owner-id").toString(),
+                                    ambulanceInfo.get("id").toString(),
+                                    ambulanceInfo.get("owner-id").toString(),
                                     document.getString("call-id"),
-                                    document.getString("dispatchID"),
+                                    document.getId(),  // Use document's unique Firestore ID here
                                     document.getString("hospital-id"),
                                     document.getString("status"),
                                     document.getTimestamp("timestamp").toDate().getTime()
@@ -97,27 +104,17 @@ public class HospitalHomeScreen extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String dispatchId = data.getStringExtra("dispatchId");
 
-            // Find the accepted notification and move it to the record screen
-            Notification acceptedNotification = null;
-            for (Notification notification : notificationList) {
-                if (notification.getDispatchId().equals(dispatchId)) {
-                    acceptedNotification = notification;
-                    break;
-                }
-            }
-
-            if (acceptedNotification != null) {
-                moveNotificationToRecord(acceptedNotification);
-            }
+            // Update Firestore to mark the notification as accepted
+            db.collection("dispatches").document(dispatchId)
+                    .update("accepted", "yes")
+                    .addOnSuccessListener(aVoid -> {
+                        // Refresh the home screen notifications after accepting a notification
+                        fetchNotifications();
+                        // Optionally move the accepted notification to the record list if needed
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HospitalHomeScreen.this, "Failed to update notification status.", Toast.LENGTH_SHORT).show();
+                    });
         }
-    }
-
-    public void moveNotificationToRecord(Notification notification) {
-        // Remove the notification from the home screen list
-        notificationList.remove(notification);
-        // Add the notification to the record list
-        recordList.add(notification);
-        // Notify the adapter that the data set has changed
-        adapter.notifyDataSetChanged();
     }
 }

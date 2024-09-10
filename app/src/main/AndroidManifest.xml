@@ -82,11 +82,8 @@
         <activity android:name=".ambulanceScreenActivity"
             android:exported="true"/>
 
-
-
         <activity android:name=".HomeScreenHomeDriverActivity"
             android:exported="true"/>
-
 
         <activity android:name=".EmergencyDetail"
             android:exported="true"/>
@@ -95,8 +92,11 @@
             android:exported="true"/>
 
         <activity android:name=".HospitalRecordScreen"
-
             android:exported="true"/>
+
+        <activity android:name=".HospitalEditInfo"
+            android:exported="true"/>
+
         <activity android:name=".HomeScreenRecordDriverActivity"
 
             android:exported="true"/>

@@ -12,12 +12,7 @@
           "package_name": "project.cs426.hospitalbulance"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "295681078083-89qdfrhqs1d1cd13336243rq1virm2ta.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyCXOe9tJDucFySn4B2hiuVTAXO1YFc4w2Y"
@@ -25,12 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "295681078083-89qdfrhqs1d1cd13336243rq1virm2ta.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

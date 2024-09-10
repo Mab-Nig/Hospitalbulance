@@ -8,32 +8,33 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import project.cs426.hospitalbulance.backend.Authenticator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SignupActivity extends AppCompatActivity {
-    private final Authenticator authenticator = new Authenticator().setContext(this);
+
     private EditText emailEditText, passwordEditText;
-    private ImageButton patientButton, ambulanceButton, hospitalButton;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        this.emailEditText = findViewById(R.id.emailEditText);
-        this.passwordEditText = findViewById(R.id.passwordEditText);
+        mAuth = FirebaseAuth.getInstance();
+
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
         Button registerButton = findViewById(R.id.registerButton);
         TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
 
-        this.patientButton = findViewById(R.id.patientButton);
-        this.ambulanceButton = findViewById(R.id.ambulanceButton);
-        this.hospitalButton = findViewById(R.id.hospitalButton);
-        setRoleSelectListener();
-
-        registerButton.setOnClickListener(v -> createNewAccount());
+        registerButton.setOnClickListener(v -> createNewAccount("patient"));
 
         loginTextView.setOnClickListener(v -> {
             Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
@@ -43,60 +44,23 @@ public class SignupActivity extends AppCompatActivity {
         backArrowButton.setOnClickListener(v -> onBackPressed());
     }
 
-    private void setRoleSelectListener() {
-        this.patientButton.setActivated(true);
-        this.ambulanceButton.setActivated(false);
-        this.hospitalButton.setActivated(false);
+    private void createNewAccount(String userType) {
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
-        this.patientButton.setOnClickListener(v -> {
-            this.patientButton.setActivated(true);
-            this.ambulanceButton.setActivated(false);
-            this.hospitalButton.setActivated(false);
-        });
-        this.ambulanceButton.setOnClickListener(v -> {
-            this.patientButton.setActivated(false);
-            this.ambulanceButton.setActivated(true);
-            this.hospitalButton.setActivated(false);
-        });
-        this.hospitalButton.setOnClickListener(v -> {
-            this.patientButton.setActivated(false);
-            this.ambulanceButton.setActivated(false);
-            this.hospitalButton.setActivated(true);
-        });
-    }
-
-    private String getSelectedRole() {
-        if (this.patientButton.isActivated()) {
-            return "patient";
-        }
-        if (this.ambulanceButton.isActivated()) {
-            return "ambulance_owner";
-        }
-        return "hospital";
-    }
-    
-    private void createNewAccount() {
-        String email = this.emailEditText.getText().toString();
-        String password = this.passwordEditText.getText().toString();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            final String msg = "Cannot leave empty fields.";
-            Toast.makeText(SignupActivity.this, msg, Toast.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-
-        this.authenticator.setEmail(email)
-                .setPassword(password)
-                .setOnCompleteListener(new Authenticator.OnCompleteListener() {
-                    @Override
-                    public void onSuccess() {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    if (userType.equals("patient")) {
                         Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
                         startActivity(intent);
+                        finish();
                     }
-                    @Override
-                    public void onFailure() {}
-                })
-                .signUp(getSelectedRole());
+                } else {
+                    Toast.makeText(SignupActivity.this, "Failed to create account: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

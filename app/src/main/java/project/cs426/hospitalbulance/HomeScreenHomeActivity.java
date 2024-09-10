@@ -33,7 +33,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     private FusedLocationProviderClient fusedLocationClient;
     private final int LOCATION_REQUEST_CODE = 1000;
 
-
+    private String username = "";
     private double currentLat;
     private double currentLong;
 
@@ -48,6 +48,9 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen_home);
+
+        Intent getintent = getIntent();
+        username = getintent.getStringExtra("username");
 
         // Set up Cancel button
         Button cancel = findViewById(R.id.cancel_button);
@@ -207,7 +210,6 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         if (v == findViewById(R.id.document_button)) {
-            String username = "user@gmail.com";
             Intent myIntent = new Intent(HomeScreenHomeActivity.this, HomeScreenRecordActivity.class);
             myIntent.putExtra("username", username); // Optional parameters
             this.startActivity(myIntent);

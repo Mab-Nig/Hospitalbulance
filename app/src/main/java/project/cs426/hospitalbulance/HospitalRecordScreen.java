@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class HospitalRecordScreen extends AppCompatActivity {
     private NotificationAdapter adapter;
     private List<Notification> recordList;
     private FirebaseFirestore db;
+    private ListenerRegistration recordListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +35,8 @@ public class HospitalRecordScreen extends AppCompatActivity {
         recordRecyclerView = findViewById(R.id.recordRecyclerView);
         recordList = new ArrayList<>();
 
-        // Fetch records from Firestore where accepted = "yes"
-        fetchAcceptedNotifications();
+        // Listen for records from Firestore where accepted = "yes"
+        listenForAcceptedNotifications();
 
         // Set up adapter with click listener to navigate to EmergencyDetail screen
         adapter = new NotificationAdapter(this, recordList, notification -> {
@@ -50,7 +53,7 @@ public class HospitalRecordScreen extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            String email = getIntent().getStringExtra("username"); // Get the email from the Intent
+            String email = getIntent().getStringExtra("username");
 
             if (itemId == R.id.home) {
                 Intent recordIntent = new Intent(HospitalRecordScreen.this, HospitalHomeScreen.class);
@@ -68,40 +71,47 @@ public class HospitalRecordScreen extends AppCompatActivity {
             return false;
         });
 
+        bottomNavigationView.setSelectedItemId(R.id.record);
     }
 
-    // Method to fetch records from Firestore where accepted = "yes"
-    private void fetchAcceptedNotifications() {
-        db.collection("dispatches")
-                .whereEqualTo("accepted", "yes")  // Fetch records where accepted = "yes"
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        recordList.clear();  // Clear the list before adding new data
-                        for (DocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
-                            if (ambulanceInfo == null) continue;
-
-                            Notification notification = new Notification(
-                                    document.getString("case"),
-                                    document.getString("address"),
-                                    ambulanceInfo.get("id").toString(),
-                                    ambulanceInfo.get("owner-id").toString(),
-                                    document.getString("call-id"),
-                                    document.getId(),  // Use document's unique Firestore ID here
-                                    document.getString("hospital-id"),
-                                    document.getString("status"),
-                                    document.getTimestamp("timestamp").toDate().getTime()
-                            );
-                            recordList.add(notification);
-                        }
-                        adapter.notifyDataSetChanged();  // Update the RecyclerView
-                    } else {
-                        Toast.makeText(HospitalRecordScreen.this, "Failed to fetch records.", Toast.LENGTH_SHORT).show();
+    // Method to listen for real-time updates of records from Firestore where accepted = "yes"
+    private void listenForAcceptedNotifications() {
+        recordListener = db.collection("dispatches")
+                .whereEqualTo("accepted", "yes")
+                .addSnapshotListener((queryDocumentSnapshots, error) -> {
+                    if (error != null) {
+                        Toast.makeText(HospitalRecordScreen.this, "Error fetching real-time records.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(HospitalRecordScreen.this, "Error fetching records: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    recordList.clear();  // Clear the list before adding new data
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
+                        if (ambulanceInfo == null) continue;
+
+                        Notification notification = new Notification(
+                                document.getString("case"),
+                                document.getString("address"),
+                                ambulanceInfo.get("id").toString(),
+                                ambulanceInfo.get("owner-id").toString(),
+                                document.getString("call-id"),
+                                document.getId(),
+                                document.getString("hospital-id"),
+                                document.getString("status"),
+                                document.getTimestamp("timestamp").toDate().getTime()
+                        );
+                        recordList.add(notification);
+                    }
+                    adapter.notifyDataSetChanged();
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the Firestore listener when the activity is destroyed
+        if (recordListener != null) {
+            recordListener.remove();
+        }
     }
 }

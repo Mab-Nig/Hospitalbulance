@@ -50,18 +50,24 @@ public class HospitalHomeScreen extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            String email = getIntent().getStringExtra("username"); // Get the email from the Intent
 
             if (itemId == R.id.home) {
                 return true;
             } else if (itemId == R.id.record) {
-                startActivity(new Intent(HospitalHomeScreen.this, HospitalRecordScreen.class));
+                Intent recordIntent = new Intent(HospitalHomeScreen.this, HospitalRecordScreen.class);
+                recordIntent.putExtra("username", email);
+                startActivity(recordIntent);
                 return true;
             } else if (itemId == R.id.editinfo) {
-            startActivity(new Intent(HospitalHomeScreen.this, HospitalEditInfo.class));
-            return true;
-        }
+                Intent editInfoIntent = new Intent(HospitalHomeScreen.this, HospitalEditInfo.class);
+                editInfoIntent.putExtra("username", email);
+                startActivity(editInfoIntent);
+                return true;
+            }
             return false;
         });
+
     }
 
     // Method to fetch notifications from Firestore

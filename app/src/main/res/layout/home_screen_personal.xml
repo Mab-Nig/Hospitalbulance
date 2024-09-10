@@ -86,7 +86,7 @@
             android:id = "@+id/blood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Blood Group - O +ve"
+            android:text="Blood Group"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
@@ -96,7 +96,7 @@
             android:id = "@+id/weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight - 65kgs"
+            android:text="Weight"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
@@ -106,7 +106,7 @@
             android:id = "@+id/diabetic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Diabetic - No"
+            android:text="Diabetic"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
@@ -116,7 +116,7 @@
             android:id = "@+id/allergies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Allergies - None"
+            android:text="Allergies"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
@@ -228,6 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:id="@+id/sidebar_image1"
                 android:onClick="editInformationClicked"> <!-- Clickable action -->
 
                 <ImageView
@@ -279,6 +280,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:id="@+id/sidebar_image3"
                 android:onClick="logoutClicked">
 
                 <ImageView

@@ -53,7 +53,19 @@
             android:exported="true" />
 
         <activity
+            android:name=".WelcomeScreen"
+            android:exported="true" />
+
+        <activity
             android:name=".SignupActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".AmbulanceRegistrationActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".HospitalRegistrationActivity"
             android:exported="true" />
 
         <activity
@@ -69,6 +81,26 @@
             android:exported="true" />
 
         <activity android:name=".ambulanceScreenActivity"
+            android:exported="true"/>
+
+
+
+        <activity android:name=".HomeScreenHomeDriverActivity"
+            android:exported="true"/>
+
+
+        <activity android:name=".EmergencyDetail"
+            android:exported="true"/>
+
+        <activity android:name=".HospitalHomeScreen"
+            android:exported="true"/>
+
+        <activity android:name=".HospitalRecordScreen"
+
+            android:exported="true"/>
+
+
+        <activity android:name=".EditInfo"
             android:exported="true"/>
 
     </application>

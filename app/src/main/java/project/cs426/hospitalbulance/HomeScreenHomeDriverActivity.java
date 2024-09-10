@@ -1,6 +1,7 @@
 package project.cs426.hospitalbulance;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -57,6 +58,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
 
     private GoogleMap mMap;
 
+    private String username = "";
+
     private String callID ="";
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -83,6 +86,9 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen_driver_home);
 
+        Intent getintent = getIntent();
+        username = getintent.getStringExtra("username");
+
         Button car_status = findViewById(R.id.car_status);
         car_status.setBackgroundColor(Color.parseColor("#00CF00"));
         car_status.setOnClickListener(this);
@@ -93,6 +99,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
 
         Button call = findViewById(R.id.call_button);
         call.setBackgroundColor(Color.parseColor("#808080"));
+
+        findViewById(R.id.document_button).setOnClickListener(this);
 
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -353,6 +361,14 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         {
             Button confirm = findViewById(R.id.confirm_button);
             confirm.setBackgroundColor(Color.parseColor("#00CF00"));
+        }
+        else if(v == findViewById(R.id.document_button))
+        {
+            Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, HomeScreenRecordDriverActivity.class);
+            String carID = "59A-11111"; //Perform read carID here instead
+            myIntent.putExtra("carID", carID);
+            this.startActivity(myIntent);
+            finish();
         }
     }
 

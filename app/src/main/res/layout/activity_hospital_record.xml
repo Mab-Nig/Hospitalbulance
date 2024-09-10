@@ -5,15 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
-    <!-- Notification Tags for Records -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recordRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@id/bottomNavigationView"
-        android:layout_marginTop="20dp" />
-
-    <!-- Bottom Navigation View (placed at the bottom of the screen) -->
+    <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
@@ -21,5 +13,26 @@
         android:layout_alignParentBottom="true"
         android:background="@color/red"
         app:menu="@menu/navigation_menu" />
+
+    <!-- Previous Emergency Cases Text -->
+    <TextView
+        android:id="@+id/previousEmergencyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Previous Emergency Cases"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <!-- RecyclerView for displaying the notifications -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recordRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavigationView"
+        android:layout_below="@+id/previousEmergencyText"
+        android:layout_marginTop="20dp" />
 
 </RelativeLayout>

@@ -50,18 +50,24 @@ public class HospitalRecordScreen extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            String email = getIntent().getStringExtra("username"); // Get the email from the Intent
 
             if (itemId == R.id.home) {
-                startActivity(new Intent(HospitalRecordScreen.this, HospitalHomeScreen.class));
+                Intent recordIntent = new Intent(HospitalRecordScreen.this, HospitalHomeScreen.class);
+                recordIntent.putExtra("username", email);
+                startActivity(recordIntent);
                 return true;
             } else if (itemId == R.id.record) {
                 return true;
             } else if (itemId == R.id.editinfo) {
-                startActivity(new Intent(HospitalRecordScreen.this, HospitalEditInfo.class));
+                Intent editInfoIntent = new Intent(HospitalRecordScreen.this, HospitalEditInfo.class);
+                editInfoIntent.putExtra("username", email);
+                startActivity(editInfoIntent);
                 return true;
             }
             return false;
         });
+
     }
 
     // Method to fetch records from Firestore where accepted = "yes"

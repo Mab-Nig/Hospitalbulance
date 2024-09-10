@@ -14,26 +14,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthSettings;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import project.cs426.hospitalbulance.backend.database.Collections;
 import project.cs426.hospitalbulance.backend.database.OtherMedicalInfo;
@@ -44,61 +35,52 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-	@Override
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen_record);
 
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-		try {
-			prepareContent(username);
-		} catch (Exception ignored) {}
-		Button save = findViewById(R.id.save_button);
+        readPatientDocument();
+
+        Button save = findViewById(R.id.save_button);
         save.setBackgroundColor(Color.parseColor("#808080"));
 
         EditText edit = findViewById(R.id.add_body);
-        edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-				String content = String.valueOf(edit.getText());
-				if (hasFocus) {
-					if (!content.isEmpty())
-                    {
-                        Button save = findViewById(R.id.save_button);
-                        save.setBackgroundColor(Color.parseColor("#C53434"));
-                    }
-                    // EditText gained focus
-                } else {
-                    // EditText lost focus
-					if (!content.isEmpty())
-                    {
-                        Button save = findViewById(R.id.save_button);
-                        save.setBackgroundColor(Color.parseColor("#C53434"));
-                    }
+        edit.setOnFocusChangeListener((v, hasFocus) -> {
+            String content = String.valueOf(edit.getText());
+            if (hasFocus) {
+                if (!content.isEmpty()) {
+                    save.setBackgroundColor(Color.parseColor("#C53434"));
+                }
+                // EditText gained focus
+            } else {
+                // EditText lost focus
+                if (!content.isEmpty()) {
+                    save.setBackgroundColor(Color.parseColor("#C53434"));
                 }
             }
         });
     }
 
-    private void prepareContent(String username)
-            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-		RecyclerView bodyDetail = findViewById(R.id.body_measure);
-		RecyclerView medicationDetail = findViewById(R.id.medications);
-		RecyclerView symptomDetail = findViewById(R.id.symptoms);
-		RecyclerView otherDataDetail = findViewById(R.id.other_data);
+    private void prepareContent(Patient patient)
+            throws InvocationTargetException, IllegalAccessException {
+        RecyclerView bodyDetail = findViewById(R.id.body_measure);
+        RecyclerView medicationDetail = findViewById(R.id.medications);
+        RecyclerView symptomDetail = findViewById(R.id.symptoms);
+        RecyclerView otherDataDetail = findViewById(R.id.other_data);
 
         bodyDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         medicationDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         symptomDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         otherDataDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        Patient patient = readPatientDocument();
-
         List<String> bodyMeasurements = readBodyMeasurements(patient);
         List<String> medications = readMedications(patient);
         List<String> symptoms = readSymptoms(patient);
         List<String> otherData = readOtherData(patient);
+
+        Log.d(TAG, "prepareContent:bodyMeasurements"
+                + String.join("; ", bodyMeasurements));
 
         DetailRecordAdapter bodyMeasurementsAdapter = new DetailRecordAdapter(bodyMeasurements);
         DetailRecordAdapter medicationsAdapter = new DetailRecordAdapter(medications);
@@ -111,13 +93,14 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         otherDataDetail.setAdapter(otherDataAdapter);
     }
 
-    private Patient readPatientDocument() {
-        AtomicReference<Patient> patient = new AtomicReference<>();
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private void readPatientDocument() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser()
+                .getUid();
         this.db.collection(Collections.PATIENTS).document(currentUserId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    final String msg = "readOtherData:Document ID: " + documentSnapshot.getId();
+                    final String msg = "readPatientDocument:Document ID: "
+                            + documentSnapshot.getId();
 
                     if (!documentSnapshot.exists()) {
                         Log.e(TAG, msg + "does not exist.");
@@ -125,15 +108,24 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
                     }
 
                     Log.d(TAG, msg);
-                    patient.set(documentSnapshot.toObject(Patient.class));
+                    Log.d(TAG, "readPatientDocument:documentSnapshot: "
+                            + documentSnapshot.getData());
+                    try {
+                        prepareContent(documentSnapshot.toObject(Patient.class));
+                    } catch (Exception ignored) {}
                 });
-        return patient.get();
     }
 
     private List<String> readBodyMeasurements(@NonNull Patient patient) {
         List<String> results = new ArrayList<>();
-        results.add("Weight - " + patient.getMedicalInfo().getBodyMeasurements().getWeight());
-        results.add("Height - " + patient.getMedicalInfo().getBodyMeasurements().getHeight());
+        results.add("Weight - "
+                + Double.valueOf(patient.getMedicalInfo().getBodyMeasurements()
+                        .getWeight())
+                .toString());
+        results.add("Height - "
+                + Double.valueOf(patient.getMedicalInfo().getBodyMeasurements()
+                        .getHeight())
+                .toString());
         return results;
     }
 
@@ -146,7 +138,7 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
     }
 
     private List<String> readOtherData(@NonNull Patient patient)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
         final Map<String, String> fieldToDisplay = new HashMap<>();
         fieldToDisplay.put("alcoholAssumption", "Alcohol Assumption");
         fieldToDisplay.put("isInhalerUsed", "Inhaler Usage");
@@ -156,20 +148,33 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         fieldToDisplay.put("specialAbilities", "Special Abilities");
 
         final OtherMedicalInfo other = patient.getMedicalInfo().getOther();
-
         List<String> results = new ArrayList<>();
-        for (Field field : other.getClass().getDeclaredFields()) {
-            String getterName = "get" + StringUtils.capitalize(field.getName());
-            Method getterMethod = other.getClass().getMethod(getterName);
-            results.add(fieldToDisplay.get(field.getName())
-                    + otherFieldValueToString(getterMethod.invoke(other)));
+        for (Method method : other.getClass().getDeclaredMethods()) {
+            final String methodName = method.getName();
+            final boolean methodStartsWithGet = StringUtils.startsWith(methodName, "get");
+            final boolean methodStartsWithIs = StringUtils.startsWith(methodName, "is");
+
+            if (!methodStartsWithGet && !methodStartsWithIs) {
+                continue;
+            }
+
+            String fieldName;
+            if (methodStartsWithGet) {
+                fieldName = StringUtils.removeStart(methodName, "get");
+                fieldName = StringUtils.uncapitalize(fieldName);
+            } else {
+                fieldName = StringUtils.uncapitalize(methodName);
+            }
+            Log.d(TAG, "readOtherData:fieldName: " + fieldName);
+            results.add(fieldToDisplay.get(fieldName) + " - "
+                    + otherFieldValueToString(method.invoke(other)));
         }
         return results;
     }
 
     private String otherFieldValueToString(@NonNull Object value) {
         if (value instanceof Boolean) {
-            if ((boolean) value) {
+            if ((boolean)value) {
                 return "Yes";
             }
             return "No";
@@ -184,7 +189,7 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         }
 
         if (value instanceof List) {
-            List<Object> valueList = (List<Object>) value;
+            List<Object> valueList = (List<Object>)value;
             List<String> valueString = new ArrayList<>(valueList.size());
             for (int i = 0; i < valueString.size(); ++i) {
                 valueString.set(i, valueList.get(i).toString());
@@ -196,9 +201,9 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
 
     @Override
     public void onClick(View v) {
-        if(v == findViewById(R.id.save_button)) {
+        if (v == findViewById(R.id.save_button)) {
             //Input update data (change and new data) to the database and reload the screen
-        } else if(v == findViewById(R.id.home_button)) {
+        } else if (v == findViewById(R.id.home_button)) {
             Intent intent = new Intent(this, HomeScreenHomeActivity.class);
             this.startActivity(intent);
         }

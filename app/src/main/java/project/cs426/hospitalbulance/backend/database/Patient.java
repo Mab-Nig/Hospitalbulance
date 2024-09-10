@@ -1,28 +1,26 @@
 package project.cs426.hospitalbulance.backend.database;
 
 import com.google.firebase.firestore.PropertyName;
-import com.google.type.Date;
-
-import java.util.List;
 
 public class Patient {
-	private PatientInfo info;
+    private PatientInfo info = new PatientInfo();
+    private MedicalInfo medicalInfo = new MedicalInfo();
 
-	@PropertyName("medical_info")
-	private MedicalInfo medicalInfo;
+    public PatientInfo getInfo() {
+        return this.info;
+    }
 
-	public Patient() {}
+    public void setInfo(PatientInfo info) {
+        this.info = info;
+    }
 
-	public Patient(PatientInfo info, MedicalInfo medicalInfo) {
-		this.info = info;
-		this.medicalInfo = medicalInfo;
-	}
+    @PropertyName("medical_info")
+    public MedicalInfo getMedicalInfo() {
+        return this.medicalInfo;
+    }
 
-	public PatientInfo getInfo() {
-		return this.info;
-	}
-
-	public MedicalInfo getMedicalInfo() {
-		return this.medicalInfo;
-	}
+    @PropertyName("medical_info")
+    public void setMedicalInfo(MedicalInfo medicalInfo) {
+        this.medicalInfo = medicalInfo;
+    }
 }

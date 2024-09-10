@@ -5,16 +5,24 @@ import com.google.firebase.firestore.PropertyName;
 import java.util.Date;
 
 public class PatientInfo {
-	private String name;
+    private String name = "";
+    private Date birthDate = new Date();
 
-	@PropertyName("birth_date")
-	private Date birthDate;
+    public String getName() {
+        return this.name;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Date getBirthDate() {
-		return this.birthDate;
-	}
+    @PropertyName("birth_date")
+    public Date getBirthDate() {
+        return this.birthDate;
+    }
+
+    @PropertyName("birth_date")
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
 }

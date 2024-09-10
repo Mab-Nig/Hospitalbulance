@@ -14,19 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.Map;
 
 public class HospitalEditInfo extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private EditText hospitalNameEditText, hospitalAddressEditText;
     private String userEmail;
@@ -37,7 +33,6 @@ public class HospitalEditInfo extends AppCompatActivity {
         setContentView(R.layout.activity_hospital_edit_info);
 
         // Initialize Firebase instances
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         hospitalNameEditText = findViewById(R.id.hospitalNameEditText);
@@ -57,8 +52,8 @@ public class HospitalEditInfo extends AppCompatActivity {
             return;
         }
 
-        // Fetch current hospital info from Firestore and display it
-        fetchHospitalInfo(userEmail);
+        // Listen for real-time updates in Firestore
+        listenForHospitalInfo(userEmail);
 
         // Handle the save button click
         saveInfoButton.setOnClickListener(v -> saveHospitalInfo(userEmail));
@@ -70,7 +65,7 @@ public class HospitalEditInfo extends AppCompatActivity {
         // Implement Bottom Navigation View
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            String email = getIntent().getStringExtra("username"); // Get the email from the Intent
+            String email = getIntent().getStringExtra("username");
 
             if (itemId == R.id.home) {
                 Intent homeIntent = new Intent(HospitalEditInfo.this, HospitalHomeScreen.class);
@@ -87,45 +82,37 @@ public class HospitalEditInfo extends AppCompatActivity {
             }
             return false;
         });
+
+        bottomNavigationView.setSelectedItemId(R.id.editinfo);
     }
 
-    // Fetch the hospital information based on the email and display it.
-    private void fetchHospitalInfo(String email) {
+    // Fetch the hospital information based on the email and display it in real-time.
+    private void listenForHospitalInfo(String email) {
         db.collection("hospitals")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Check if the document has the "login-info" field
-                                if (document.contains("login-info")) {
-                                    Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
+                .whereEqualTo("login-info.username", email)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w("HospitalEditInfo", "Listen failed.", e);
+                        return;
+                    }
 
-                                    // Check if the email matches the "username" field in the "login-info"
-                                    if (loginInfo != null && email.equals(loginInfo.get("username"))) {
-                                        // Fetch the "info" map that contains the hospital details
-                                        Map<String, Object> info = (Map<String, Object>) document.get("info");
-                                        if (info != null) {
-                                            String name = (String) info.get("name");
-                                            String address = (String) info.get("address");
+                    if (snapshots != null && !snapshots.isEmpty()) {
+                        for (DocumentSnapshot document : snapshots.getDocuments()) {
+                            Map<String, Object> info = (Map<String, Object>) document.get("info");
+                            if (info != null) {
+                                String name = (String) info.get("name");
+                                String address = (String) info.get("address");
 
-                                            Log.d("HospitalEditInfo", "Hospital Name: " + name);
-                                            Log.d("HospitalEditInfo", "Hospital Address: " + address);
+                                Log.d("HospitalEditInfo", "Hospital Name: " + name);
+                                Log.d("HospitalEditInfo", "Hospital Address: " + address);
 
-                                            // Display the hospital name and address in the EditText fields
-                                            hospitalNameEditText.setText(name);
-                                            hospitalAddressEditText.setText(address);
-                                        }
-                                        return;
-                                    }
-                                }
+                                // Display the hospital name and address in the EditText fields
+                                hospitalNameEditText.setText(name);
+                                hospitalAddressEditText.setText(address);
                             }
-                            Toast.makeText(HospitalEditInfo.this, "No matching hospital information found.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.w("HospitalEditInfo", "Error getting documents.", task.getException());
-                            Toast.makeText(HospitalEditInfo.this, "Failed to retrieve hospital info.", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(HospitalEditInfo.this, "No matching hospital information found.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -152,7 +139,6 @@ public class HospitalEditInfo extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        // Assuming we only have one matching hospital document, get the first result
                         DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
                         String documentId = documentSnapshot.getId();
 
@@ -174,7 +160,7 @@ public class HospitalEditInfo extends AppCompatActivity {
 
     // Logout the user
     private void logout() {
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         Intent logoutIntent = new Intent(HospitalEditInfo.this, LoginActivity.class);
         startActivity(logoutIntent);
         finish();

@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +22,8 @@ public class HospitalHomeScreen extends AppCompatActivity {
     private RecyclerView notificationsRecyclerView;
     private NotificationAdapter adapter;
     private List<Notification> notificationList;
-    public static List<Notification> recordList = new ArrayList<>();  // Shared record list
     private FirebaseFirestore db;
+    private ListenerRegistration notificationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,8 @@ public class HospitalHomeScreen extends AppCompatActivity {
         notificationsRecyclerView = findViewById(R.id.notificationsRecyclerView);
         notificationList = new ArrayList<>();
 
-        // Fetch notifications from Firestore (replace this with actual Firestore query)
-        fetchNotifications();
+        // Fetch notifications from Firestore in real-time
+        listenForNotifications();
 
         adapter = new NotificationAdapter(this, notificationList, notification -> {
             // Navigate to EmergencyDetail screen with the selected notification's dispatch ID
@@ -68,39 +71,49 @@ public class HospitalHomeScreen extends AppCompatActivity {
             return false;
         });
 
+        bottomNavigationView.setSelectedItemId(R.id.home);
     }
 
-    // Method to fetch notifications from Firestore
-    private void fetchNotifications() {
-        db.collection("dispatches")
-                .whereEqualTo("accepted", "no")  // Only fetch notifications where accepted = no
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        notificationList.clear();  // Clear the list before adding new data
-                        for (DocumentSnapshot document : task.getResult()) {
-                            // Safely extract fields
-                            Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
-                            if (ambulanceInfo == null) continue;
-
-                            Notification notification = new Notification(
-                                    document.getString("case"),
-                                    document.getString("address"),
-                                    ambulanceInfo.get("id").toString(),
-                                    ambulanceInfo.get("owner-id").toString(),
-                                    document.getString("call-id"),
-                                    document.getId(),  // Use document's unique Firestore ID here
-                                    document.getString("hospital-id"),
-                                    document.getString("status"),
-                                    document.getTimestamp("timestamp").toDate().getTime()
-                            );
-                            notificationList.add(notification);
-                        }
-                        adapter.notifyDataSetChanged();  // Update the RecyclerView
-                    } else {
-                        Toast.makeText(HospitalHomeScreen.this, "Failed to fetch notifications.", Toast.LENGTH_SHORT).show();
+    // Method to fetch notifications in real-time from Firestore
+    private void listenForNotifications() {
+        notificationListener = db.collection("dispatches")
+                .whereEqualTo("accepted", "no")
+                .addSnapshotListener((queryDocumentSnapshots, error) -> {
+                    if (error != null) {
+                        Toast.makeText(HospitalHomeScreen.this, "Error fetching real-time updates.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
+
+                    notificationList.clear();  // Clear the list before adding new data
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        // Safely extract fields
+                        Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
+                        if (ambulanceInfo == null) continue;
+
+                        Notification notification = new Notification(
+                                document.getString("case"),
+                                document.getString("address"),
+                                ambulanceInfo.get("id").toString(),
+                                ambulanceInfo.get("owner-id").toString(),
+                                document.getString("call-id"),
+                                document.getId(),
+                                document.getString("hospital-id"),
+                                document.getString("status"),
+                                document.getTimestamp("timestamp").toDate().getTime()
+                        );
+                        notificationList.add(notification);
+                    }
+                    adapter.notifyDataSetChanged();
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the Firestore listener when the activity is destroyed
+        if (notificationListener != null) {
+            notificationListener.remove();
+        }
     }
 
     @Override
@@ -114,9 +127,7 @@ public class HospitalHomeScreen extends AppCompatActivity {
             db.collection("dispatches").document(dispatchId)
                     .update("accepted", "yes")
                     .addOnSuccessListener(aVoid -> {
-                        // Refresh the home screen notifications after accepting a notification
-                        fetchNotifications();
-                        // Optionally move the accepted notification to the record list if needed
+                        // No need to manually refresh, real-time listener will handle the updates
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(HospitalHomeScreen.this, "Failed to update notification status.", Toast.LENGTH_SHORT).show();

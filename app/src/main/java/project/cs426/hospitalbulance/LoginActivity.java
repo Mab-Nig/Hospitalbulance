@@ -1,6 +1,7 @@
 package project.cs426.hospitalbulance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +25,10 @@ public class LoginActivity extends AppCompatActivity {
         this.passwordEditText = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);  // New button
-        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);  // New button
+        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
+        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);
+        autoFillLogin(emailEditText, passwordEditText);
+
 
         loginButton.setOnClickListener(v -> loginUser());
 
@@ -33,12 +36,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // Handle Facebook login
         fbLoginButton.setOnClickListener(v -> {
-
+            // TODO: Implement Facebook login
         });
 
         // Handle Gmail login
         gmailLoginButton.setOnClickListener(v -> {
-
+            // TODO: Implement Gmail login
         });
     }
 
@@ -67,5 +70,20 @@ public class LoginActivity extends AppCompatActivity {
                     public void onFailure() {}
                 })
                 .signIn();
+    }
+
+    private void autoFillLogin(EditText emailEditText, EditText passwordEditText) {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+
+        // Retrieve saved email and password
+        String savedEmail = sharedPreferences.getString("email", null);
+        String savedPassword = sharedPreferences.getString("password", null);
+
+        // Check if both are not null (meaning user credentials are saved)
+        if (savedEmail != null && savedPassword != null) {
+            // Auto-fill email and password into EditText fields
+            emailEditText.setText(savedEmail);
+            passwordEditText.setText(savedPassword);
+        }
     }
 }

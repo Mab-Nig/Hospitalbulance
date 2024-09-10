@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
+    android:id="@+id/home_driver_Layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -45,7 +45,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="134dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="I need First AID"
+        android:text="Call Waitting"
         android:textColor="@color/white"
         android:textSize="7pt"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="170dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Types of First AID"
+        android:text="Emergency"
         android:textSize="8pt"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,122 +76,89 @@
 
     </TextView>
 
-    <ImageButton
-        android:id="@+id/fractures_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/fractures_icon"
-        app:layout_constraintEnd_toStartOf="@+id/breath_button"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
 
-    <ImageButton
-        android:id="@+id/breath_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:background="@drawable/breath_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <ImageButton
-        android:id="@+id/nausea_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="200dp"
-        android:background="@drawable/nausea_icon"
-        app:layout_constraintStart_toEndOf="@+id/breath_button"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <ImageButton
-        android:id="@+id/cpr_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="288dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/cpr_icon"
-        app:layout_constraintEnd_toStartOf="@+id/narcotis_button"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <ImageButton
-        android:id="@+id/narcotis_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="290dp"
-        android:background="@drawable/narcotis_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <ImageButton
-        android:id="@+id/radiation_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="288dp"
-        android:background="@drawable/radiation_icon"
-        app:layout_constraintStart_toEndOf="@+id/narcotis_button"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="370dp"
-        android:fontFamily="@font/poppins_bold"
-        android:text="Having an Emergency?"
-        android:textSize="8pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="403dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Press the button below\n help will arrive soon"
-        android:textSize="6pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
-
-
-    <ImageButton
-        android:id="@+id/call_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="412dp"
-        android:background="@drawable/call_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.55"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
-
-    <ImageView
-        android:id="@+id/gifImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="525dp"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map_fragment_container"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="220dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <Button
-        android:id="@+id/cancel_button"
+        android:id="@+id/car_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="660dp"
+        android:layout_marginTop="480dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="CANCEL"
+        android:text="AVAILABLE"
         android:textSize="8pt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></Button>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Number of Patients -->
+
+    <EditText
+        android:id="@+id/numberOfAdults"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="548dp"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Number of adults"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/numberOfChildren"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="604dp"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Number of children"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/symptoms"
+        android:layout_width="340dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="654dp"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Enter symptoms"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="252dp"
+        android:layout_marginTop="604dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="CONFIRM"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/call_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="252dp"
+        android:layout_marginTop="554dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="CALL"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -202,6 +169,8 @@
         android:src="@drawable/taskbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"></ImageView>
+
+
 
     <ImageButton
         android:id="@+id/home_button"
@@ -236,14 +205,12 @@
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="nausea_button" />
+        android:layout_height="wrap_content" />
 
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="cpr_button" />
+        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "295681078083-pn21lj3vom1v38k6bsbh2c681a808hpn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.cs426.hospitalbulance",
+            "certificate_hash": "066a6ae66f5132c32fde9932231e2e569a62e045"
+          }
+        },
+        {
           "client_id": "295681078083-89qdfrhqs1d1cd13336243rq1virm2ta.apps.googleusercontent.com",
           "client_type": 3
         }

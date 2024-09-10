@@ -223,13 +223,13 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="216dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Symptons"
+        android:text="Symptoms"
         android:textSize="7pt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/symptons"
+        android:id="@+id/symptoms"
         android:layout_width="240dp"
         android:layout_height="80dp"
         android:layout_marginStart="48dp"
@@ -306,7 +306,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <EditText
-        android:id="@+id/add_symptons"
+        android:id="@+id/add_symptoms"
         android:fontFamily="@font/poppins_regular"
         android:textSize="6pt"
         android:layout_width="wrap_content"

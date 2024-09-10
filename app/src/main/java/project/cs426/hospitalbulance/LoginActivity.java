@@ -108,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "patient":
                                     // Navigate to HomeScreenHomeActivity
                                     Intent userIntent = new Intent(LoginActivity.this, HomeScreenHomeActivity.class);
+                                    userIntent.putExtra("username", email);
                                     startActivity(userIntent);
                                     finish();
                                     break;
@@ -115,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "hospital":
                                     // Navigate to HospitalHomeScreen
                                     Intent hospitalIntent = new Intent(LoginActivity.this, HospitalHomeScreen.class);
+                                    hospitalIntent.putExtra("username", email);
                                     startActivity(hospitalIntent);
                                     finish();
                                     break;
@@ -122,6 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "ambulance":
                                     // Handle ambulance case later
                                     Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    ambulanceIntent.putExtra("username", email);
                                     startActivity(ambulanceIntent);
                                     finish();
                                     break;

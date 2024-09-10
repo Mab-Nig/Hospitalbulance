@@ -42,12 +42,6 @@ public class Authenticator {
     }
     private OnCompleteListener onCompleteListener;
 
-    public Authenticator() {
-        final String localIp = "192.168.1.5";
-        this.auth.useEmulator(localIp, 9099);
-        this.db.useEmulator(localIp, 8080);
-    }
-
     public Authenticator setContext(Context context) {
         this.context = context;
         return this;

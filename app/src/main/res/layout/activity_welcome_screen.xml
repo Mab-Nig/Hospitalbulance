@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".WelcomeScreen">
+
+    <!-- ResQ Logo Image -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/resq_splash"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"/>
+
+    <!-- Welcome Text -->
+    <TextView
+        android:id="@+id/welcomeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome!"
+        android:textColor="@color/red"
+        android:textSize="24sp"
+        android:fontFamily="@font/poppins_bold"
+        app:layout_constraintTop_toBottomOf="@id/logoImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Are you...? Text -->
+    <TextView
+        android:id="@+id/areYouTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Are you ... ?"
+        android:textColor="@color/red"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Patient Button -->
+    <Button
+        android:id="@+id/patientButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Patient"
+        android:drawableEnd="@drawable/ic_patient"
+        android:textColor="@color/red"
+        android:backgroundTint="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_bolditalic"
+        app:layout_constraintTop_toBottomOf="@id/areYouTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="50dp"/>
+
+    <!-- Ambulance Service Button -->
+    <Button
+        android:id="@+id/ambulanceButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ambulance Service"
+        android:drawableEnd="@drawable/ic_ambulance"
+        android:textColor="@color/red"
+        android:backgroundTint="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_bolditalic"
+        app:layout_constraintTop_toBottomOf="@id/patientButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Hospital Button -->
+    <Button
+        android:id="@+id/hospitalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hospital"
+        android:drawableEnd="@drawable/ic_hospital"
+        android:textColor="@color/red"
+        android:backgroundTint="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_bolditalic"
+        app:layout_constraintTop_toBottomOf="@id/ambulanceButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

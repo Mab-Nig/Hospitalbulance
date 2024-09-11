@@ -1,7 +1,10 @@
 package project.cs426.hospitalbulance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -10,6 +13,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import project.cs426.hospitalbulance.backend.Authenticator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
     private final Authenticator authenticator = new Authenticator().setContext(this);
@@ -24,8 +34,10 @@ public class LoginActivity extends AppCompatActivity {
         this.passwordEditText = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
-        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);  // New button
-        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);  // New button
+        ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
+        ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);
+        
+        autoFillLogin(emailEditText, passwordEditText);
 
         loginButton.setOnClickListener(v -> loginUser());
 
@@ -33,12 +45,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // Handle Facebook login
         fbLoginButton.setOnClickListener(v -> {
-
+            // TODO: Implement Facebook login
         });
 
         // Handle Gmail login
         gmailLoginButton.setOnClickListener(v -> {
-
+            // TODO: Implement Gmail login
         });
     }
 
@@ -53,19 +65,89 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        if (TextUtils.isEmpty(password)) {
+            passwordEditText.setError("Password is required.");
+            passwordEditText.requestFocus();
+            return;
+        }
+
         this.authenticator.setEmail(email)
                 .setPassword(password)
                 .setOnCompleteListener(new Authenticator.OnCompleteListener() {
                     @Override
                     public void onSuccess() {
-                        Intent intent = new Intent(LoginActivity.this,
-                                HomeScreenHomeActivity.class);
-                        startActivity(intent);
+                        checkUserRole(email);
                     }
 
                     @Override
-                    public void onFailure() {}
+                    public void onFailure() {
+                        Toast.makeText(LoginActivity.this, "Incorrect email or password.", Toast.LENGTH_LONG).show();
+                    }
                 })
                 .signIn();
+    }
+    
+    private void autoFillLogin(EditText emailEditText, EditText passwordEditText) {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+
+        // Retrieve saved email and password
+        String savedEmail = sharedPreferences.getString("email", null);
+        String savedPassword = sharedPreferences.getString("password", null);
+
+        // Check if both are not null (meaning user credentials are saved)
+        if (savedEmail != null && savedPassword != null) {
+            // Auto-fill email and password into EditText fields
+            emailEditText.setText(savedEmail);
+            passwordEditText.setText(savedPassword);
+        }
+    }
+
+    private void checkUserRole(String email) {
+        db.collection("client").whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                        String role = document.getString("role");
+
+                        if (role != null) {
+                            switch (role) {
+                                case "patient":
+                                    // Navigate to HomeScreenHomeActivity
+                                    Intent userIntent = new Intent(LoginActivity.this, HomeScreenHomeActivity.class);
+                                    startActivity(userIntent);
+                                    finish();
+                                    break;
+
+                                case "hospital":
+                                    // Navigate to HospitalHomeScreen
+                                    Intent hospitalIntent = new Intent(LoginActivity.this, HospitalHomeScreen.class);
+                                    startActivity(hospitalIntent);
+                                    finish();
+                                    break;
+
+                                case "ambulance":
+                                    // Handle ambulance case later
+                                    Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    startActivity(ambulanceIntent);
+                                    finish();
+                                    break;
+
+                                default:
+                                    Toast.makeText(LoginActivity.this, "Unknown role.", Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Client data not found.", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, "Error checking role: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 }

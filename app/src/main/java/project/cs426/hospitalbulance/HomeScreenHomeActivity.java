@@ -167,6 +167,14 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
             intent.putExtra("imageResId", R.drawable.radiation);
             startActivity(intent);
         });
+        findViewById(R.id.personal_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_per = new Intent(HomeScreenHomeActivity.this, HomeScreenPersonalActivity.class);
+
+                startActivity(intent_per);
+            }
+        });
     }
 
     @Override

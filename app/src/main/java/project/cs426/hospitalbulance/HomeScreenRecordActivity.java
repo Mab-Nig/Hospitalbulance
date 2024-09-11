@@ -79,9 +79,6 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         List<String> symptoms = readSymptoms(patient);
         List<String> otherData = readOtherData(patient);
 
-        Log.d(TAG, "prepareContent:bodyMeasurements"
-                + String.join("; ", bodyMeasurements));
-
         DetailRecordAdapter bodyMeasurementsAdapter = new DetailRecordAdapter(bodyMeasurements);
         DetailRecordAdapter medicationsAdapter = new DetailRecordAdapter(medications);
         DetailRecordAdapter symptomsAdapter = new DetailRecordAdapter(symptoms);

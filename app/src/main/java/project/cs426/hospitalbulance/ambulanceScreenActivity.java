@@ -42,7 +42,9 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
 
     private FirebaseFirestore db;
 
-    private ArrayList<HospitalTime> listHospitalTimes ;
+    private ArrayList<PlaceTime> listHospitalTimes ;
+
+    private ArrayList<PlaceTime> listAmbulanceTimes;
 
 
     private static final String TAG = "Directions";
@@ -150,23 +152,23 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
             // When finding car, update car ID, car model, ambulance owner
 
             //DETAIL:
-            //PERFORM READING all hospital places
-            HospitalWithDurations ob = new HospitalWithDurations(USER_PLACE_ID, new HospitalTimesCallback() {
+            //PERFORM READING all hospital + AMBULANCE places
+
+            AmbulanceWithDurations findAmbulance = new AmbulanceWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
                 @Override
-                public void onHospitalTimesReady(ArrayList<HospitalTime> hospitalTimes) {
+                public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
+                    listAmbulanceTimes = placeTimes;
+                    // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
+                    listAmbulanceTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
+                    //Already sort from fastest to lowest route to different ambulances
 
-                        listHospitalTimes = hospitalTimes;
-                        // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
-                        listHospitalTimes.sort(Comparator.comparingInt(HospitalTime::getDuration));
-                        //Already sort from fastest to lowest route to different hospitals
-                        // Print sorted list for verification
+                    Log.d("CHECK SIZE", "onPlaceTimesReady: " + listAmbulanceTimes.size());
+                    // Print sorted list for verification
+                    for (PlaceTime ht : listAmbulanceTimes) {
+                        Log.d("CHECK SORT AMBULANCE", "Duration in sec " + ht.getDuration());
+                    }
 
-                        Log.d("GOT HERE", "onClick: " + hospitalTimes.size());
-                        for (HospitalTime ht : listHospitalTimes) {
-                            Log.d("CHECK SORT HOSPITAL", "Duration in sec" + ht.getDuration());
-                        }
-
-                        //PERFORM FINDING CAR AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO LISTHOSPITALTIMES
+                    //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListAmbulanceTimes
                 }
 
                 @Override
@@ -175,8 +177,28 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
                     Log.e(TAG, "Error: " + errorMessage);
                 }
             });
+            HospitalWithDurations findHospital = new HospitalWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
+                @Override
+                public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
+                    listHospitalTimes = placeTimes;
+                    // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
+                    listHospitalTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
+                    //Already sort from fastest to lowest route to different hospitals
+                    // Print sorted list for verification
 
+                    for (PlaceTime ht : listHospitalTimes) {
+                        Log.d("CHECK SORT HOSPITAL", "Duration in sec " + ht.getDuration());
+                    }
 
+                    //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListHospitalTimes
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                // Handle the error case
+                Log.e(TAG, "Error: " + errorMessage);
+                }
+            });
         }
     }
 }

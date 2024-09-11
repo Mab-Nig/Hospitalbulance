@@ -108,7 +108,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
 
         EditText adultNum = findViewById(R.id.numberOfAdults);
         EditText childNum = findViewById(R.id.numberOfChildren);
-        EditText symptoms = findViewById(R.id.symptoms);
+        EditText caseEdit = findViewById(R.id.case_edit);
+        EditText status = findViewById(R.id.status);
 
         adultNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -144,14 +145,32 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 }
             }
         });
-        symptoms.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        caseEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     // EditText gained focus
                 } else {
                     // EditText lost focus
-                    String content = String.valueOf(symptoms.getText());
+                    String content = String.valueOf(caseEdit.getText());
+                    if (!content.isEmpty() && !content.equals(symtomsDetail))
+                    {
+                        Button cf = findViewById(R.id.confirm_button);
+                        cf.setBackgroundColor(Color.parseColor("#808080"));
+                        symtomsDetail = content;
+                    }
+                }
+            }
+        });
+
+        status.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    // EditText gained focus
+                } else {
+                    // EditText lost focus
+                    String content = String.valueOf(status.getText());
                     if (!content.isEmpty() && !content.equals(symtomsDetail))
                     {
                         Button cf = findViewById(R.id.confirm_button);
@@ -171,7 +190,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 // Clear focus from the EditText
                 stopEnter(adultNum);
                 stopEnter(childNum);
-                stopEnter(symptoms);
+                stopEnter(caseEdit);
+                stopEnter(status);
                 return false;
             }
 

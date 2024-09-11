@@ -101,7 +101,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         call.setBackgroundColor(Color.parseColor("#808080"));
 
         findViewById(R.id.document_button).setOnClickListener(this);
-
+        findViewById(R.id.personal_button).setOnClickListener(this);
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -390,6 +390,16 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
             this.startActivity(myIntent);
             finish();
         }
+        else if(v == findViewById(R.id.personal_button))
+        {
+            Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, AmbulancePersonal.class);
+            String carID = "59A-11111"; //Perform read carID here instead
+            myIntent.putExtra("carID", carID);
+            this.startActivity(myIntent);
+            finish();
+            Log.d("HomeScreenHomeDriverActivity", "Personal button clicked");
+        }
+
     }
 
     private void updateStatus(String newStatus) {

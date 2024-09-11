@@ -9,12 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HospitalRecordScreen extends AppCompatActivity {
 
@@ -35,13 +33,13 @@ public class HospitalRecordScreen extends AppCompatActivity {
         recordRecyclerView = findViewById(R.id.recordRecyclerView);
         recordList = new ArrayList<>();
 
-        // Listen for records from Firestore where accepted = "yes"
+        // Listen for records from Firestore where accepted = true
         listenForAcceptedNotifications();
 
         // Set up adapter with click listener to navigate to EmergencyDetail screen
         adapter = new NotificationAdapter(this, recordList, notification -> {
             Intent intent = new Intent(HospitalRecordScreen.this, EmergencyDetail.class);
-            intent.putExtra("dispatchId", notification.getDispatchId());
+            intent.putExtra("callId", notification.getCallId());
             intent.putExtra("isFromRecord", true);
             startActivity(intent);
         });
@@ -74,10 +72,10 @@ public class HospitalRecordScreen extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.record);
     }
 
-    // Method to listen for real-time updates of records from Firestore where accepted = "yes"
+    // Method to listen for real-time updates of records from Firestore where accepted = true
     private void listenForAcceptedNotifications() {
-        recordListener = db.collection("dispatches")
-                .whereEqualTo("accepted", "yes")
+        recordListener = db.collection("calls")
+                .whereEqualTo("accepted", "true")
                 .addSnapshotListener((queryDocumentSnapshots, error) -> {
                     if (error != null) {
                         Toast.makeText(HospitalRecordScreen.this, "Error fetching real-time records.", Toast.LENGTH_SHORT).show();
@@ -86,19 +84,13 @@ public class HospitalRecordScreen extends AppCompatActivity {
 
                     recordList.clear();  // Clear the list before adding new data
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
-                        if (ambulanceInfo == null) continue;
-
                         Notification notification = new Notification(
-                                document.getString("case"),
-                                document.getString("address"),
-                                ambulanceInfo.get("id").toString(),
-                                ambulanceInfo.get("owner-id").toString(),
-                                document.getString("call-id"),
-                                document.getId(),
-                                document.getString("hospital-id"),
-                                document.getString("status"),
-                                document.getTimestamp("timestamp").toDate().getTime()
+                                document.getString("case") != null ? document.getString("case") : "N/A",
+                                document.getString("address") != null ? document.getString("address") : "N/A",
+                                document.getString("carID") != null ? document.getString("carID") : "N/A",
+                                document.getString("status") != null ? document.getString("status") : "N/A",
+                                document.getTimestamp("timestamp") != null ? document.getTimestamp("timestamp").toDate().getTime() : 0,
+                                document.getId()  // dispatch ID
                         );
                         recordList.add(notification);
                     }

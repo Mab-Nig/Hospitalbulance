@@ -1,28 +1,23 @@
 package project.cs426.hospitalbulance;
 
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,28 +28,28 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.util.Comparator;
 
 public class ambulanceScreenActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
-    private String  USER_PLACE_NAME ;
+    private String USER_PLACE_NAME;
     private GoogleMap mMap;
     private LatLng currentLocation;
 
+    private FirebaseFirestore db;
+
+    private ArrayList<HospitalTime> listHospitalTimes ;
+
+
+    private static final String TAG = "Directions";
+    private static final String BASE_URL = "https://maps.googleapis.com/maps/api/";
     private String USER_PLACE_ID;
 
-    private final String  API_KEY = "AIzaSyAI1QP38yYGgMKA2z32ANGztqmd518Pf1Q";
-
+    private final String API_KEY = "AIzaSyAI1QP38yYGgMKA2z32ANGztqmd518Pf1Q";
 
 
     @Override
@@ -103,7 +98,7 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
 
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(),API_KEY);
+            Places.initialize(getApplicationContext(), API_KEY);
         }
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -141,8 +136,7 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onClick(View v) {
-        if(v == findViewById(R.id.call_car_button))
-        {
+        if (v == findViewById(R.id.call_car_button)) {
             ImageView gifImageView = findViewById(R.id.gifImageView);
 
             // Load GIF using Glide
@@ -154,6 +148,35 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
             car_content.setText("");
             // make a request to server using USER_PLACE_ID and USER_PLACE_NAME
             // When finding car, update car ID, car model, ambulance owner
+
+            //DETAIL:
+            //PERFORM READING all hospital places
+            HospitalWithDurations ob = new HospitalWithDurations(USER_PLACE_ID, new HospitalTimesCallback() {
+                @Override
+                public void onHospitalTimesReady(ArrayList<HospitalTime> hospitalTimes) {
+
+                        listHospitalTimes = hospitalTimes;
+                        // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
+                        listHospitalTimes.sort(Comparator.comparingInt(HospitalTime::getDuration));
+                        //Already sort from fastest to lowest route to different hospitals
+                        // Print sorted list for verification
+
+                        Log.d("GOT HERE", "onClick: " + hospitalTimes.size());
+                        for (HospitalTime ht : listHospitalTimes) {
+                            Log.d("CHECK SORT HOSPITAL", "Duration in sec" + ht.getDuration());
+                        }
+
+                        //PERFORM FINDING CAR AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO LISTHOSPITALTIMES
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    // Handle the error case
+                    Log.e(TAG, "Error: " + errorMessage);
+                }
+            });
+
+
         }
     }
 }

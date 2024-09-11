@@ -127,13 +127,24 @@
 
 
     <EditText
-        android:id="@+id/symptoms"
-        android:layout_width="340dp"
+        android:id="@+id/status"
+        android:layout_width="170dp"
         android:layout_height="50dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="654dp"
         android:fontFamily="@font/poppins_regular"
-        android:hint="Enter symptoms"
+        android:hint="Enter status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/case_edit"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="198dp"
+        android:layout_marginTop="654dp"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Enter case"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

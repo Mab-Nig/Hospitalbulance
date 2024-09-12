@@ -165,7 +165,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 .setPositiveButton("Logout", (dialog, id) -> {
                     Intent intent = new Intent(HomeScreenPersonalActivity.this,SignupActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    saveCredentials(username,"123");
+                    saveCredentials(username);
                     startActivity(intent);
                     finish();
                 })
@@ -176,15 +176,14 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
     }
-    private void saveCredentials(String email, String password) {
+    private void saveCredentials(String email) {
         SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // Store email and password in SharedPreferences
-        editor.putString("email", email);
-        editor.putString("password", password);
-
-        // Apply changes
+        editor.clear();
         editor.apply();
+        editor.putString("email", email);
+        editor.putString("password","123456");
+        editor.apply(); // Save new data
+
     }
 }

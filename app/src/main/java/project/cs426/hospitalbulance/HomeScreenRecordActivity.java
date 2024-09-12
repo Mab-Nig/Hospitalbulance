@@ -21,12 +21,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import project.cs426.hospitalbulance.backend.database.Collections;
+import project.cs426.hospitalbulance.backend.database.Patient;
 
 public class HomeScreenRecordActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -277,56 +281,15 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         {
             details.clear();
         }
-        CollectionReference usersRef = db.collection("users");
-        // do querry to get data
-        usersRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    // Access the 'general-info' map
-                    Map<String, Object> medicalInfo = (Map<String, Object>) document.get("medical-info");
-                    // Access the 'login-info' map
-                    Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
 
-                    if (loginInfo != null) {
-                        // Example: Access fields in 'login-info' map
-                        String username_get = (String) loginInfo.get("username");
-                        // Check and use the data
-                        if (username_get != null ) {
-                            Log.d("Firestore", "User ID: " + document.getId() +
-                                    " Username: " + username_get );
-                            if(username_get.equals(username))
-                            {
-                                if (medicalInfo != null) {
-                                    // Access 'weight' and 'height' within 'general-info' map
-                                    ArrayList<String> listMediacation = (ArrayList<String>) medicalInfo.get("Medications");
-                                    // Check for null values and handle appropriately
-                                    if (listMediacation != null) {
-                                        Log.d("Firestore", "User ID: " + document.getId());
-                                        for(int i  = 0; i < listMediacation.size(); i++)
-                                        {
-                                            details.add(listMediacation.get(i));
-                                        }
-                                        DetailRecordAdapter adapter1 = new DetailRecordAdapter(details);
-                                        medicationDetail.setAdapter(adapter1);
-                                        break;
-                                    } else {
-                                        Log.d("Firestore", "Missing medication in medical-info for User ID: " + document.getId());
-                                    }
-                                } else {
-                                    Log.d("Firestore", "Missing medical-info for User ID: " + document.getId());
-                                }
-                            }
-                        } else {
-                            Log.d("Firestore", "Missing username or email in login-info for User ID: " + document.getId());
-                        }
-                    } else {
-                        Log.d("Firestore", "Missing login-info for User ID: " + document.getId());
-                    }
-                }
-            } else {
-                Log.w("Firestore", "Error getting documents.", task.getException());
-            }
-        });
+        this.db.collection(Collections.PATIENTS).whereEqualTo("email", username)
+                .get().addOnSuccessListener(querySnapshot -> {
+                   for( DocumentSnapshot result : querySnapshot.getDocuments())
+                   {
+                       Patient man = result.toObject(Patient.class);
+                       Log.d("READ DATA FIREBASE", "readMedications: " + result.getData());
+                   }
+                });
 
 //        details.add("Combiflam Tablet");
 //        details.add("Duloxetine");

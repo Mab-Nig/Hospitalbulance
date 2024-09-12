@@ -6,6 +6,8 @@ import com.google.firebase.firestore.PropertyName;
 import java.util.Date;
 
 public class Call {
+    private String address ="";
+    private String cases ="";
     private String callerEmail = "";
     private String status = "";
     private GeoPoint location = new GeoPoint(0.0, 0.0);
@@ -76,5 +78,22 @@ public class Call {
 
     public void setLocation(GeoPoint location) {
         this.location = location;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+   @PropertyName("case")
+    public String getCases() {
+        return cases;
+    }
+@PropertyName("case")
+    public void setCases(String cases) {
+        this.cases = cases;
     }
 }

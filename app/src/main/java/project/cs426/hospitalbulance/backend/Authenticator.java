@@ -43,7 +43,7 @@ public class Authenticator {
     private OnCompleteListener onCompleteListener;
 
     public Authenticator() {
-//        final String localIp = "192.168.1.7";
+//        final String localIp = " 169.254.190.21";// CHINH CAI NAY HA
 //        try {
 //            this.auth.useEmulator(localIp, 9099);
 //            this.db.useEmulator(localIp, 8080);
@@ -117,7 +117,7 @@ public class Authenticator {
                         this.onCompleteListener.onSuccess();
                         return;
                     }
-
+                    Log.e(TAG, "signIn: " + this.email + " && " + this.password );
                     Log.e(TAG, "signIn:failure");
                     try {
                         throw task.getException();

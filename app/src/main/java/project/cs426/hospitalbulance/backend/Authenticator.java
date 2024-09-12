@@ -43,13 +43,13 @@ public class Authenticator {
     private OnCompleteListener onCompleteListener;
 
     public Authenticator() {
-        final String localIp = "192.168.1.7";
-        try {
-            this.auth.useEmulator(localIp, 9099);
-            this.db.useEmulator(localIp, 8080);
-        } catch (IllegalStateException e) {
-            Log.e(TAG, e.getMessage());
-        }
+//        final String localIp = "192.168.1.7";
+//        try {
+//            this.auth.useEmulator(localIp, 9099);
+//            this.db.useEmulator(localIp, 8080);
+//        } catch (IllegalStateException e) {
+//            Log.e(TAG, e.getMessage());
+//        }
     }
 
     public Authenticator setContext(Context context) {

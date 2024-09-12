@@ -141,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 case "hospital":
                                     // Navigate to HospitalHomeScreen
-                                    Intent hospitalIntent = new Intent(LoginActivity.this, HospitalHomeScreen.class);
+                                    Intent hospitalIntent = new Intent(LoginActivity.this, HospitalScreen.class);
                                     hospitalIntent.putExtra("username", email);
                                     startActivity(hospitalIntent);
                                     finish();

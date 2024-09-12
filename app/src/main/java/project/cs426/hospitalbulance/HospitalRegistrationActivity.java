@@ -54,7 +54,7 @@ public class HospitalRegistrationActivity extends AppCompatActivity {
                     public void onSuccess() {
                         if (userType.equals("hospital")) {
                             Intent intent = new Intent(HospitalRegistrationActivity.this,
-                                    HospitalHomeScreen.class);
+                                    HospitalScreen.class);
                             startActivity(intent);
                             finish();
                         }

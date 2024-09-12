@@ -65,7 +65,7 @@ public class HospitalEditInfoFragment extends Fragment {
 
     private void listenForHospitalInfo(String email) {
         db.collection("hospitals")
-                .whereEqualTo("login-info.username", email)
+                .whereEqualTo("email", email)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Log.w("HospitalEditInfoFragment", "Listen failed.", e);
@@ -106,7 +106,7 @@ public class HospitalEditInfoFragment extends Fragment {
         }
 
         db.collection("hospitals")
-                .whereEqualTo("login-info.username", email)
+                .whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {

@@ -54,7 +54,7 @@ public class HospitalRecordFragment extends Fragment {
 
     private void listenForAcceptedNotifications() {
         recordListener = db.collection("calls")
-                .whereEqualTo("accepted", "true")
+                .whereEqualTo("is_accepted", "true")
                 .addSnapshotListener((queryDocumentSnapshots, error) -> {
                     if (error != null) {
                         Toast.makeText(getContext(), "Error fetching records.", Toast.LENGTH_SHORT).show();
@@ -66,7 +66,7 @@ public class HospitalRecordFragment extends Fragment {
                         Notification notification = new Notification(
                                 document.getString("case"),
                                 document.getString("address"),
-                                document.getString("carID"),
+                                document.getString("car_id"),
                                 document.getString("status"),
                                 document.getTimestamp("timestamp").toDate().getTime(),
                                 document.getId()

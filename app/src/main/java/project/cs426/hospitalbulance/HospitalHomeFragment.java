@@ -54,7 +54,7 @@ public class HospitalHomeFragment extends Fragment {
 
     private void listenForNotifications() {
         notificationListener = db.collection("calls")
-                .whereEqualTo("accepted", "false")
+                .whereEqualTo("is_accepted", "false")
                 .addSnapshotListener((queryDocumentSnapshots, error) -> {
                     if (error != null) return;
                     notificationList.clear();
@@ -62,7 +62,7 @@ public class HospitalHomeFragment extends Fragment {
                         Notification notification = new Notification(
                                 document.getString("case"),
                                 document.getString("address"),
-                                document.getString("carID"),
+                                document.getString("car_id"),
                                 document.getString("status"),
                                 document.getTimestamp("timestamp").toDate().getTime(),
                                 document.getId()

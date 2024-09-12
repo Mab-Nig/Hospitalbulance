@@ -148,11 +148,11 @@ public class EditInfo extends AppCompatActivity {
 
                                 String address_str = (String) generalInfo.get("address");
                                 address.setText(address_str);
-                                db.collection("users").document(username).update("general-info.blood-type", bloodType.getText().toString());
-                                db.collection("users").document(username).update("general-info.first-name", firstName.getText().toString());
-                                db.collection("users").document(username).update("general-info.last-name", lastName.getText().toString());
-                                db.collection("users").document(username).update("general-info.address", address.getText().toString());
-                                db.collection("users").document(username).update("login-info.username", email.getText().toString());
+                                db.collection("users").document(username).update("general-info/blood-type", bloodType.getText().toString());
+                                db.collection("users").document(username).update("general-info/first-name", firstName.getText().toString());
+                                db.collection("users").document(username).update("general-info/last-name", lastName.getText().toString());
+                                db.collection("users").document(username).update("general-info/address", address.getText().toString());
+                                db.collection("users").document(username).update("login-info/username", email.getText().toString());
                                 break;
 
                             }

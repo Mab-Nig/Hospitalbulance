@@ -107,7 +107,7 @@ public class EmergencyDetail extends AppCompatActivity {
                         addressTextView.setText("Address: " + (address != null ? address : "N/A"));
 
                         // Get ambulance ID from carID
-                        String carID = documentSnapshot.getString("carID");
+                        String carID = documentSnapshot.getString("car_id");
                         ambulanceId.setText("Ambulance ID: " + (carID != null ? carID : "N/A"));
 
                         // Get other individual fields
@@ -134,12 +134,12 @@ public class EmergencyDetail extends AppCompatActivity {
         // Fetch the user's hospital mapID
         String username = currentUser.getEmail();  // Assuming the current user's email is their username
         db.collection("hospitals")
-                .whereEqualTo("login-info.username", username)
+                .whereEqualTo("email", username)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-                        String mapID = document.getString("mapID");
+                        String mapID = document.getString("maps_id");
 
                         // Check if mapID is valid before proceeding
                         if (mapID == null || mapID.isEmpty()) {
@@ -149,7 +149,7 @@ public class EmergencyDetail extends AppCompatActivity {
 
                         // Update Firestore to mark the call as accepted and set hospitalID
                         db.collection("calls").document(callDocumentId)
-                                .update("accepted", "true", "hospitalID", mapID)
+                                .update("is_accepted", "true", "hospital_id", mapID)
                                 .addOnSuccessListener(aVoid -> {
                                     // Send the updated callDocumentId back to the HospitalHomeScreen
                                     Intent resultIntent = new Intent();

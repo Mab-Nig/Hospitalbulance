@@ -222,14 +222,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
             startActivity(intent);
         });
 
-        findViewById(R.id.personal_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent_per = new Intent(HomeScreenHomeActivity.this, HomeScreenPersonalActivity.class);
 
-                startActivity(intent_per);
-            }
-        });
     }
 
     @Override
@@ -298,8 +291,9 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         }
         else if(v == findViewById(R.id.personal_button))
         {
-            Intent intent = new Intent(this, HomeScreenPersonalActivity.class);
-            this.startActivity(intent);
+            Intent myIntent_personal = new Intent(HomeScreenHomeActivity.this, HomeScreenPersonalActivity.class);
+            myIntent_personal.putExtra("username", username); // Optional parameters
+            this.startActivity(myIntent_personal);
         }
     }
 

@@ -1,5 +1,6 @@
 package project.cs426.hospitalbulance;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,12 +37,20 @@ public class EditInfo extends AppCompatActivity {
 
 // Get Firestore instance
         db = FirebaseFirestore.getInstance();
-        readDataGeneral("user@gmail.com",firstName,lastName,email,bloodType,address);
+        Intent intent_sup = getIntent();
+        String username = intent_sup.getStringExtra("username");
+        readDataGeneral(username,firstName,lastName,email,bloodType,address);
 
         savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                writeDataGeneral("username@gmail.com",firstName, lastName, email, bloodType, address);
+                writeDataGeneral(username,firstName, lastName, email, bloodType, address);
+            }
+        });
+        findViewById(R.id.back_edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }

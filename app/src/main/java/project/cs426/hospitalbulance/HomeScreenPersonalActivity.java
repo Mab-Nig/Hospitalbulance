@@ -75,10 +75,13 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        prepareContext("user@gmail.com");
-        findViewById(R.id.sidebar_image3).setOnClickListener(v -> showLogoutConfirmationDialog());
+        Intent intent_sup = getIntent();
+        String username = intent_sup.getStringExtra("username");
+        prepareContext(username);
+        findViewById(R.id.sidebar_image3).setOnClickListener(v -> showLogoutConfirmationDialog(username));
         findViewById(R.id.sidebar_image1).setOnClickListener(v -> {
             Intent intent = new Intent(HomeScreenPersonalActivity.this, EditInfo.class);
+          intent.putExtra("username", username);
             startActivity(intent);
         });
     }
@@ -154,7 +157,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
         });
     }
 
-    private void showLogoutConfirmationDialog() {
+    private void showLogoutConfirmationDialog(String username) {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomeScreenPersonalActivity.this);
         builder.setTitle("Confirm Logout")
                 .setMessage("Are you sure you want to logout?")
@@ -162,7 +165,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 .setPositiveButton("Logout", (dialog, id) -> {
                     Intent intent = new Intent(HomeScreenPersonalActivity.this,SignupActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    saveCredentials("user@gmail.com","123");
+                    saveCredentials(username,"123");
                     startActivity(intent);
                     finish();
                 })

@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <!-- Image -->
@@ -31,18 +30,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@id/bottomNavigationView"
+        android:layout_height="match_parent"
         android:layout_below="@+id/currentEmergencyText"
         android:layout_marginTop="20dp" />
-
-    <!-- Bottom Navigation View -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/red"
-        app:menu="@menu/navigation_menu" />
 
 </RelativeLayout>

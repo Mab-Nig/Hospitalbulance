@@ -53,7 +53,7 @@ public class HospitalRegistrationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     if (userType.equals("hospital")) {
-                        Intent intent = new Intent(HospitalRegistrationActivity.this, HospitalHomeScreen.class);
+                        Intent intent = new Intent(HospitalRegistrationActivity.this, HospitalScreen.class);
                         startActivity(intent);
                         finish();
                     }

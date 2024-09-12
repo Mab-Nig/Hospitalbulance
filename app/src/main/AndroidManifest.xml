@@ -88,19 +88,11 @@
         <activity android:name=".EmergencyDetail"
             android:exported="true"/>
 
-        <activity android:name=".HospitalHomeScreen"
-            android:exported="true"/>
-
-        <activity android:name=".HospitalRecordScreen"
-            android:exported="true"/>
-
-        <activity android:name=".HospitalEditInfo"
+        <activity android:name=".HospitalScreen"
             android:exported="true"/>
 
         <activity android:name=".HomeScreenRecordDriverActivity"
-
             android:exported="true"/>
-
 
         <activity android:name=".EditInfo"
             android:exported="true"/>

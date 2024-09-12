@@ -395,6 +395,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
             Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, AmbulancePersonal.class);
             String carID = "59A-11111"; //Perform read carID here instead
             myIntent.putExtra("carID", carID);
+            myIntent.putExtra("username",username);
             this.startActivity(myIntent);
             finish();
             Log.d("HomeScreenHomeDriverActivity", "Personal button clicked");

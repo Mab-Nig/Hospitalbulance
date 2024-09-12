@@ -1,13 +1,16 @@
 package project.cs426.hospitalbulance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,8 +47,10 @@ public class AmbulancePersonal extends AppCompatActivity {
          // Get Firestore instance
         db = FirebaseFirestore.getInstance();
         // Set listener for the switch
-        readData("ambulance@gmail.com",etCarIdPer,etCarModelPer,switchShowAddress,scrollViewAddress,tvCarAddress);
-
+        Intent intent_sup = getIntent();
+        String username = intent_sup.getStringExtra("username");
+        readData(username,etCarIdPer,etCarModelPer,switchShowAddress,scrollViewAddress,tvCarAddress);
+        findViewById(R.id.btn_logout_am).setOnClickListener(v -> showLogoutConfirmationDialog(username));
         switchShowAddress.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 // Show the address when switch is ON
@@ -128,5 +133,34 @@ public class AmbulancePersonal extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void showLogoutConfirmationDialog(String username) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AmbulancePersonal.this);
+        builder.setTitle("Confirm Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setCancelable(true)
+                .setPositiveButton("Logout", (dialog, id) -> {
+                    Intent intent = new Intent(AmbulancePersonal.this,SignupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    saveCredentials(username);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                    dialog.dismiss();
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+    private void saveCredentials(String email) {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+        editor.putString("email", email);
+        editor.putString("password","123456");
+        editor.apply(); // Save new data
+
     }
 }

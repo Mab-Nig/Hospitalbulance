@@ -157,7 +157,7 @@
             android:id="@+id/tv_car_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Car Address: 1234 Elm Street, City, Country"
+            android:text=""
             android:textSize="16sp"
             android:padding="10dp"/>
 

@@ -76,10 +76,13 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        prepareContext("user@gmail.com");
-        findViewById(R.id.sidebar_image3).setOnClickListener(v -> showLogoutConfirmationDialog());
+        Intent intent_sup = getIntent();
+        String username = intent_sup.getStringExtra("username");
+        prepareContext(username);
+        findViewById(R.id.sidebar_image3).setOnClickListener(v -> showLogoutConfirmationDialog(username));
         findViewById(R.id.sidebar_image1).setOnClickListener(v -> {
             Intent intent = new Intent(HomeScreenPersonalActivity.this, EditInfo.class);
+          intent.putExtra("username", username);
             startActivity(intent);
         });
 
@@ -167,13 +170,15 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
         });
     }
 
-    private void showLogoutConfirmationDialog() {
+    private void showLogoutConfirmationDialog(String username) {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomeScreenPersonalActivity.this);
         builder.setTitle("Confirm Logout")
                 .setMessage("Are you sure you want to logout?")
                 .setCancelable(true)
                 .setPositiveButton("Logout", (dialog, id) -> {
+
                     logoutClicked();
+
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> {
                     dialog.dismiss();
@@ -182,16 +187,19 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
     }
+
     
     private void saveCredentials(String email, String password) {
+
+    private void saveCredentials1(String email) {
+
         SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // Store email and password in SharedPreferences
-        editor.putString("email", email);
-        editor.putString("password", password);
-
-        // Apply changes
+        editor.clear();
         editor.apply();
+        editor.putString("email", email);
+        editor.putString("password","123456");
+        editor.apply(); // Save new data
+
     }
 }

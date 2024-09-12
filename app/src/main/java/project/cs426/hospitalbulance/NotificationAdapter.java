@@ -31,9 +31,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notification notification = notificationList.get(position);
-        holder.typeOfEmergency.setText(notification.getCaseType());
-        holder.address.setText(notification.getAddress());
+        holder.caseType.setText(notification.getCaseType() != null ? notification.getCaseType() : "N/A");
+        holder.address.setText(notification.getAddress() != null ? notification.getAddress() : "N/A");
 
+        // Set onClickListener to handle item click
         holder.itemView.setOnClickListener(v -> listener.onItemClick(notification));
     }
 
@@ -43,15 +44,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView typeOfEmergency, address;
+        TextView caseType, address;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            typeOfEmergency = itemView.findViewById(R.id.typeOfEmergencyTextView);
+            caseType = itemView.findViewById(R.id.typeOfEmergencyTextView);
             address = itemView.findViewById(R.id.addressTextView);
         }
     }
 
+    // Interface for item click handling
     public interface OnItemClickListener {
         void onItemClick(Notification notification);
     }

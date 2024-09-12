@@ -11,20 +11,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import project.cs426.hospitalbulance.backend.Authenticator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SignupActivity extends AppCompatActivity {
-    private final Authenticator authenticator = new Authenticator().setContext(this);
+
     private EditText emailEditText, passwordEditText;
-    private ImageButton patientButton, ambulanceButton, hospitalButton;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        this.emailEditText = findViewById(R.id.emailEditText);
-        this.passwordEditText = findViewById(R.id.passwordEditText);
+        mAuth = FirebaseAuth.getInstance();
+
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
         Button registerButton = findViewById(R.id.registerButton);
         TextView loginTextView = findViewById(R.id.loginTextView);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);

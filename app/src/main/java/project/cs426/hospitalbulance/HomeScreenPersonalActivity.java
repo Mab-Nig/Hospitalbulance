@@ -72,6 +72,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeScreenPersonalActivity.this, PaymentActivity.class);
+
                 startActivity(intent);
             }
         });
@@ -98,8 +99,38 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        };
-        FirebaseAuth.getInstance().addIdTokenListener(signOutListener);
+        });
+    }
+
+    private void showLogoutConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeScreenPersonalActivity.this);
+        builder.setTitle("Confirm Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setCancelable(true)
+                .setPositiveButton("Logout", (dialog, id) -> {
+                    Intent intent = new Intent(HomeScreenPersonalActivity.this,SignupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    saveCredentials("user@gmail.com","123");
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                    dialog.dismiss();
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+    private void saveCredentials(String email, String password) {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Store email and password in SharedPreferences
+        editor.putString("email", email);
+        editor.putString("password", password);
+
+        // Apply changes
+        editor.apply();
     }
     
     private void prepareContext(String username) {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,8 @@ public class HospitalHomeScreen extends AppCompatActivity {
     private RecyclerView notificationsRecyclerView;
     private NotificationAdapter adapter;
     private List<Notification> notificationList;
-    public static List<Notification> recordList = new ArrayList<>();  // Shared record list
     private FirebaseFirestore db;
+    private ListenerRegistration notificationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +34,13 @@ public class HospitalHomeScreen extends AppCompatActivity {
         notificationsRecyclerView = findViewById(R.id.notificationsRecyclerView);
         notificationList = new ArrayList<>();
 
-        // Fetch notifications from Firestore (replace this with actual Firestore query)
-        fetchNotifications();
+        // Fetch notifications from Firestore in real-time
+        listenForNotifications();
 
         adapter = new NotificationAdapter(this, notificationList, notification -> {
             // Navigate to EmergencyDetail screen with the selected notification's dispatch ID
             Intent intent = new Intent(HospitalHomeScreen.this, EmergencyDetail.class);
-            intent.putExtra("dispatchId", notification.getDispatchId());
+            intent.putExtra("callId", notification.getCallId());
             startActivityForResult(intent, 1);  // Request code 1 for accepting notification
         });
 
@@ -50,44 +51,61 @@ public class HospitalHomeScreen extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            String email = getIntent().getStringExtra("username"); // Get the email from the Intent
 
             if (itemId == R.id.home) {
                 return true;
             } else if (itemId == R.id.record) {
-                startActivity(new Intent(HospitalHomeScreen.this, HospitalRecordScreen.class));
+                Intent recordIntent = new Intent(HospitalHomeScreen.this, HospitalRecordScreen.class);
+                recordIntent.putExtra("username", email);
+                startActivity(recordIntent);
+                return true;
+            } else if (itemId == R.id.editinfo) {
+                Intent editInfoIntent = new Intent(HospitalHomeScreen.this, HospitalEditInfo.class);
+                editInfoIntent.putExtra("username", email);
+                startActivity(editInfoIntent);
                 return true;
             }
-
             return false;
         });
+
+        bottomNavigationView.setSelectedItemId(R.id.home);
     }
 
-    // Method to fetch notifications from Firestore
-    private void fetchNotifications() {
-        db.collection("dispatches")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        notificationList.clear();  // Clear the list before adding new data
-                        for (DocumentSnapshot document : task.getResult()) {
-                            Notification notification = new Notification(
-                                    document.getString("case"),
-                                    document.getString("address"),
-                                    ((Map<String, Object>) document.get("ambulance-info")).get("id").toString(),
-                                    ((Map<String, Object>) document.get("ambulance-info")).get("owner-id").toString(),
-                                    document.getString("call-id"),
-                                    document.getString("dispatchID"),
-                                    document.getString("hospital-id"),
-                                    document.getString("status"),
-                                    document.getTimestamp("timestamp").toDate().getTime()
-                            );
-                            notificationList.add(notification);
-                        }
-                        adapter.notifyDataSetChanged();  // Update the RecyclerView
-                    } else {
-                        Toast.makeText(HospitalHomeScreen.this, "Failed to fetch notifications.", Toast.LENGTH_SHORT).show();
+    // Method to fetch notifications in real-time from Firestore "calls" collection where accepted = false
+    private void listenForNotifications() {
+        notificationListener = db.collection("calls")
+                .whereEqualTo("accepted", "false")
+                .addSnapshotListener((queryDocumentSnapshots, error) -> {
+                    if (error != null) {
+                        Toast.makeText(HospitalHomeScreen.this, "Error fetching real-time updates.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
+
+                    notificationList.clear();  // Clear the list before adding new data
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        // Safely extract fields
+                        Notification notification = new Notification(
+                                document.getString("case") != null ? document.getString("case") : "N/A",
+                                document.getString("address") != null ? document.getString("address") : "N/A",
+                                document.getString("carID") != null ? document.getString("carID") : "N/A",
+                                document.getString("status") != null ? document.getString("status") : "N/A",
+                                document.getTimestamp("timestamp") != null ? document.getTimestamp("timestamp").toDate().getTime() : 0,
+                                document.getId()  // dispatch ID
+                        );
+                        notificationList.add(notification);
+                    }
+                    adapter.notifyDataSetChanged();
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the Firestore listener when the activity is destroyed
+        if (notificationListener != null) {
+            notificationListener.remove();
+        }
     }
 
     @Override
@@ -95,29 +113,41 @@ public class HospitalHomeScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            String dispatchId = data.getStringExtra("dispatchId");
+            String callId = data.getStringExtra("callId");
 
-            // Find the accepted notification and move it to the record screen
-            Notification acceptedNotification = null;
-            for (Notification notification : notificationList) {
-                if (notification.getDispatchId().equals(dispatchId)) {
-                    acceptedNotification = notification;
-                    break;
-                }
+            // Check if callId is null before proceeding
+            if (callId == null || callId.isEmpty()) {
+                Toast.makeText(this, "Error: Invalid call ID.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            if (acceptedNotification != null) {
-                moveNotificationToRecord(acceptedNotification);
-            }
+            // Fetch the user's hospital mapID
+            String username = getIntent().getStringExtra("username");
+            db.collection("hospitals")
+                    .whereEqualTo("login-info.username", username)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                            String mapID = document.getString("mapID");
+
+                            // Check if mapID is null before updating Firestore
+                            if (mapID == null || mapID.isEmpty()) {
+                                Toast.makeText(HospitalHomeScreen.this, "Error: Invalid hospital ID.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            // Update Firestore to mark the call as accepted and set hospitalID
+                            db.collection("calls").document(callId)
+                                    .update("accepted", "true", "hospitalID", mapID)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // No need to manually refresh, real-time listener will handle the updates
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(HospitalHomeScreen.this, "Failed to update notification status.", Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    });
         }
-    }
-
-    public void moveNotificationToRecord(Notification notification) {
-        // Remove the notification from the home screen list
-        notificationList.remove(notification);
-        // Add the notification to the record list
-        recordList.add(notification);
-        // Notify the adapter that the data set has changed
-        adapter.notifyDataSetChanged();
     }
 }

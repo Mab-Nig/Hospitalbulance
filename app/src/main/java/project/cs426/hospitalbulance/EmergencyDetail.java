@@ -10,9 +10,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,28 +24,30 @@ import java.util.Map;
 public class EmergencyDetail extends AppCompatActivity {
 
     private FirebaseFirestore db;
-    private TextView ambulanceId, ownerId, callId, caseType, hospitalId, status, timestamp, addressTextView, dispatchId;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private TextView ambulanceId, caseType, status, timestamp, addressTextView, callId;
     private Button acceptButton;
     private ImageButton backButton;
-    private String dispatchDocumentId;
+    private String callDocumentId;
+    private boolean isFromRecord;
+    private ListenerRegistration callListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency_detail);
 
-        // Initialize Firebase Firestore
+        // Initialize Firebase Firestore and Auth
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
         // Link XML elements
         ambulanceId = findViewById(R.id.ambulanceId);
-        ownerId = findViewById(R.id.ownerId);
-        callId = findViewById(R.id.callId);
         caseType = findViewById(R.id.caseType);
-        hospitalId = findViewById(R.id.hospitalId);
         status = findViewById(R.id.status);
         timestamp = findViewById(R.id.timestamp);
-        dispatchId = findViewById(R.id.dispatchId);
         addressTextView = findViewById(R.id.address);
         acceptButton = findViewById(R.id.acceptButton);
         backButton = findViewById(R.id.backButton);
@@ -51,69 +55,131 @@ public class EmergencyDetail extends AppCompatActivity {
         // Handle back button click
         backButton.setOnClickListener(v -> onBackPressed());
 
-        // Retrieve dispatch ID from intent or other sources
-        dispatchDocumentId = getIntent().getStringExtra("dispatchId");
+        // Retrieve call ID and isFromRecord flag from intent
+        callDocumentId = getIntent().getStringExtra("callId");
+        isFromRecord = getIntent().getBooleanExtra("isFromRecord", false);
 
-        // Fetch dispatch data from Firestore
-        fetchDispatchDetails(dispatchDocumentId);
+        // If we are viewing from the record screen, hide the accept button
+        if (isFromRecord) {
+            acceptButton.setVisibility(Button.GONE);
+        }
 
-        // Handle accept button click
-        acceptButton.setOnClickListener(view -> {
-            // Handle the accept action here, e.g., updating the status and finishing the activity
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("dispatchId", dispatchDocumentId);
-            setResult(RESULT_OK, returnIntent);
-            finish();
+        // Listen for real-time call data updates
+        listenForCallDetails(callDocumentId);
+
+        // Handle accept button click (only if it is visible)
+        acceptButton.setOnClickListener(v -> {
+            if (currentUser != null) {
+                // Ensure the callDocumentId is not null or empty before proceeding
+                if (callDocumentId == null || callDocumentId.isEmpty()) {
+                    Toast.makeText(EmergencyDetail.this, "Error: Invalid call ID.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Call method to update the accepted field and hospital ID
+                updateAcceptedAndHospital(callDocumentId);
+            } else {
+                Toast.makeText(EmergencyDetail.this, "User not authenticated.", Toast.LENGTH_SHORT).show();
+                redirectToLogin();
+            }
         });
     }
 
-    private void fetchDispatchDetails(String dispatchDocumentId) {
-        if (dispatchDocumentId == null || dispatchDocumentId.isEmpty()) {
-            Toast.makeText(this, "Invalid dispatch ID.", Toast.LENGTH_SHORT).show();
+    // Method to listen for real-time updates of the call data
+    private void listenForCallDetails(String callDocumentId) {
+        if (callDocumentId == null || callDocumentId.isEmpty()) {
+            Toast.makeText(this, "Invalid call ID.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Query Firestore using the dispatchDocumentId
-        db.collection("dispatches")
-                .whereEqualTo("dispatchID", dispatchDocumentId) // Fetch the document with the correct dispatch ID
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        // Loop through results (should be one match)
-                        for (DocumentSnapshot document : task.getResult()) {
-                            // Get the address
-                            String address = document.getString("address");
-                            addressTextView.setText("Address: " + address);
+        // Listen for real-time updates from Firestore using the document ID
+        callListener = db.collection("calls")
+                .document(callDocumentId)  // Direct document reference by ID
+                .addSnapshotListener((documentSnapshot, e) -> {
+                    if (e != null) {
+                        Toast.makeText(EmergencyDetail.this, "Error fetching real-time updates.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                            // Get ambulance-info (map with id and owner-id)
-                            Map<String, Object> ambulanceInfo = (Map<String, Object>) document.get("ambulance-info");
-                            if (ambulanceInfo != null) {
-                                ambulanceId.setText("Ambulance ID: " + ambulanceInfo.get("id"));
-                                ownerId.setText("Owner ID: " + ambulanceInfo.get("owner-id"));
-                            }
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        // Get the address
+                        String address = documentSnapshot.getString("address");
+                        addressTextView.setText("Address: " + (address != null ? address : "N/A"));
 
-                            // Get other individual fields
-                            callId.setText("Call ID: " + document.getString("call-id"));
-                            caseType.setText("Case: " + document.getString("case"));
-                            hospitalId.setText("Hospital ID: " + document.getString("hospital-id"));
-                            status.setText("Status: " + document.getString("status"));
+                        // Get ambulance ID from carID
+                        String carID = documentSnapshot.getString("carID");
+                        ambulanceId.setText("Ambulance ID: " + (carID != null ? carID : "N/A"));
 
-                            // Set the dispatch ID (TextView)
-                            dispatchId.setText("Dispatch ID: " + document.getString("dispatchID"));
+                        // Get other individual fields
+                        caseType.setText("Case: " + (documentSnapshot.getString("case") != null ? documentSnapshot.getString("case") : "N/A"));
+                        status.setText("Status: " + (documentSnapshot.getString("status") != null ? documentSnapshot.getString("status") : "N/A"));
 
-                            // Format timestamp
-                            Timestamp timestampValue = document.getTimestamp("timestamp");
-                            if (timestampValue != null) {
-                                Date date = timestampValue.toDate();
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy 'at' h:mm a", Locale.getDefault());
-                                timestamp.setText("Timestamp: " + dateFormat.format(date));
-                            }
+                        // Format timestamp
+                        Timestamp timestampValue = documentSnapshot.getTimestamp("timestamp");
+                        if (timestampValue != null) {
+                            Date date = timestampValue.toDate();
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy 'at' h:mm a", Locale.getDefault());
+                            timestamp.setText("Timestamp: " + dateFormat.format(date));
+                        } else {
+                            timestamp.setText("Timestamp: N/A");
                         }
                     } else {
-                        Toast.makeText(EmergencyDetail.this, "No such dispatch exists.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EmergencyDetail.this, "No such call exists.", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(EmergencyDetail.this, "Failed to retrieve dispatch details.", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // Method to update "accepted" and "hospitalID" when accepting a case
+    private void updateAcceptedAndHospital(String callDocumentId) {
+        // Fetch the user's hospital mapID
+        String username = currentUser.getEmail();  // Assuming the current user's email is their username
+        db.collection("hospitals")
+                .whereEqualTo("login-info.username", username)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        String mapID = document.getString("mapID");
+
+                        // Check if mapID is valid before proceeding
+                        if (mapID == null || mapID.isEmpty()) {
+                            Toast.makeText(EmergencyDetail.this, "Error: Invalid hospital ID.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Update Firestore to mark the call as accepted and set hospitalID
+                        db.collection("calls").document(callDocumentId)
+                                .update("accepted", "true", "hospitalID", mapID)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Send the updated callDocumentId back to the HospitalHomeScreen
+                                    Intent resultIntent = new Intent();
+                                    resultIntent.putExtra("callId", callDocumentId);  // Pass the call ID back
+                                    setResult(RESULT_OK, resultIntent);
+                                    finish();  // Close the EmergencyDetail screen
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(EmergencyDetail.this, "Failed to accept the emergency case.", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(EmergencyDetail.this, "Failed to fetch hospital information.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the Firestore listener when the activity is destroyed
+        if (callListener != null) {
+            callListener.remove();
+        }
+    }
+
+    private void redirectToLogin() {
+        // Redirect the user to the login screen if not authenticated
+        Intent loginIntent = new Intent(EmergencyDetail.this, LoginActivity.class);
+        startActivity(loginIntent);
+        finish();
     }
 }

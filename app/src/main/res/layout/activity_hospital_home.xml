@@ -14,12 +14,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
 
-    <!-- Current Situations Text -->
+    <!-- Current Emergency Cases Text -->
     <TextView
-        android:id="@+id/currentSituationsText"
+        android:id="@+id/currentEmergencyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current Situations"
+        android:text="Current Emergency Cases"
         android:textColor="@color/red"
         android:textSize="20sp"
         android:fontFamily="@font/poppins_bold"
@@ -27,16 +27,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp" />
 
-    <!-- Notification Tags (RecyclerView for list) -->
+    <!-- Notification Tags -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/bottomNavigationView"
-        android:layout_below="@id/currentSituationsText"
+        android:layout_below="@+id/currentEmergencyText"
         android:layout_marginTop="20dp" />
 
-    <!-- Bottom Navigation View (placed at the bottom of the screen) -->
+    <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"

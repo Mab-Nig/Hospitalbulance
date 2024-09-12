@@ -95,7 +95,6 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             if (currentUser == null) {
                 Intent intent = new Intent(HomeScreenPersonalActivity.this, SignupActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                saveCredentials("user@gmail.com","123");
                 startActivity(intent);
                 finish();
             }
@@ -104,11 +103,12 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
     }
     
     private void prepareContext(String username) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         TextView blood = findViewById(R.id.blood);
         TextView weight = findViewById(R.id.weight);
         TextView diabetic = findViewById(R.id.diabetic);
         TextView allergies = findViewById(R.id.allergies);
-        readData(username, blood, weight, diabetic, allergies);
+        readData(currentUser.getEmail(), blood, weight, diabetic, allergies);
     }
 
     private void readData(String username, TextView blood, TextView weight, TextView diabetic, TextView allergies) {

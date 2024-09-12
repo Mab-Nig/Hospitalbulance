@@ -3,15 +3,30 @@ package project.cs426.hospitalbulance.backend.database;
 import com.google.firebase.firestore.PropertyName;
 
 public class Ambulance {
-    private String number;
-    private boolean isAvailable;
+    private String email = "";
+    private CarInfo carInfo = new CarInfo();
+    private boolean isAvailable = true;
 
-    public String getNumber() {
-        return this.number;
+    public Ambulance(String email) {
+        this.email = email;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @PropertyName("car_info")
+    public CarInfo getCarInfo() {
+        return this.carInfo;
+    }
+
+    @PropertyName("car_info")
+    public void setCarInfo(CarInfo carInfo) {
+        this.carInfo = carInfo;
     }
 
     @PropertyName("is_available")

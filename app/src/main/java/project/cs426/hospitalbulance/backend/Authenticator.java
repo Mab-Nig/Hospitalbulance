@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import project.cs426.hospitalbulance.backend.database.AmbulanceOwner;
+import project.cs426.hospitalbulance.backend.database.Ambulance;
 import project.cs426.hospitalbulance.backend.database.Collections;
 import project.cs426.hospitalbulance.backend.database.Hospital;
 import project.cs426.hospitalbulance.backend.database.Patient;
@@ -43,9 +43,13 @@ public class Authenticator {
     private OnCompleteListener onCompleteListener;
 
     public Authenticator() {
-        final String localIp = "192.168.1.5";
-        this.auth.useEmulator(localIp, 9099);
-        this.db.useEmulator(localIp, 8080);
+        final String localIp = "192.168.1.7";
+        try {
+            this.auth.useEmulator(localIp, 9099);
+            this.db.useEmulator(localIp, 8080);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     public Authenticator setContext(Context context) {
@@ -73,14 +77,12 @@ public class Authenticator {
     }
 
     public void signUp(@NonNull String role) {
-        role = role.toUpperCase();
-        if (!Arrays.asList("PATIENT", "HOSPITAL", "AMBULANCE_OWNER")
+        if (!Arrays.asList("patient", "hospital", "ambulance_owner")
                 .contains(role)) {
             Log.e(TAG, "signUp:invalid role " + role);
             return;
         }
 
-        String finalRole = role;
         this.auth.createUserWithEmailAndPassword(this.email, this.password)
                 .addOnCompleteListener((Activity)this.context, task -> {
                     if (task.isSuccessful()) {
@@ -88,7 +90,7 @@ public class Authenticator {
                         FirebaseUser currentUser = FirebaseAuth.getInstance()
                                 .getCurrentUser();
                         currentUser.sendEmailVerification();
-                        addUserToDatabase(finalRole);
+                        addUserToDatabase(currentUser.getEmail(), role);
                         this.onCompleteListener.onSuccess();
                         return;
                     }
@@ -132,30 +134,31 @@ public class Authenticator {
         this.auth.signOut();
     }
 
-    private void addUserToDatabase(@NonNull String role) {
+    private void addUserToDatabase(@NonNull String email, @NonNull String role) {
+        role = role.toLowerCase();
         final Map<String, String> roleToCollection = new HashMap<>();
-        roleToCollection.put("PATIENT", Collections.PATIENTS);
-        roleToCollection.put("HOSPITAL", Collections.HOSPITALS);
-        roleToCollection.put("AMBULANCE_OWNER", Collections.AMBULANCE_OWNERS);
+        roleToCollection.put("patient", Collections.PATIENTS);
+        roleToCollection.put("hospital", Collections.HOSPITALS);
+        roleToCollection.put("ambulance_owner", Collections.AMBULANCE_OWNERS);
 
         String currentUserUid = this.auth.getCurrentUser().getUid();
         WriteBatch batch = this.db.batch();
 
         DocumentReference userRef = this.db.collection(Collections.USERS)
                 .document(currentUserUid);
-        batch.set(userRef, new User(role.toLowerCase()));
+        batch.set(userRef, new User(email, role.toLowerCase()));
 
         DocumentReference roleRef = this.db.collection(roleToCollection.get(role))
                 .document(currentUserUid);
         switch (role) {
-        case "PATIENT":
-            batch.set(roleRef, new Patient());
+        case "patient":
+            batch.set(roleRef, new Patient(email));
             break;
-        case "HOSPITAL":
-            batch.set(roleRef, new Hospital());
+        case "hospital":
+            batch.set(roleRef, new Hospital(email));
             break;
-        case "AMBULANCE_OWNER":
-            batch.set(roleRef, new AmbulanceOwner());
+        case "ambulance_owner":
+            batch.set(roleRef, new Ambulance(email));
             break;
         default:
             break;

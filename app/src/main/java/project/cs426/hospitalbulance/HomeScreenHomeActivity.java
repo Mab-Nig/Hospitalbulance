@@ -33,7 +33,6 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     private FusedLocationProviderClient fusedLocationClient;
     private final int LOCATION_REQUEST_CODE = 1000;
 
-
     private double currentLat;
     private double currentLong;
 

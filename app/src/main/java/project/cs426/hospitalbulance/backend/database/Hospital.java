@@ -3,8 +3,21 @@ package project.cs426.hospitalbulance.backend.database;
 import com.google.firebase.firestore.PropertyName;
 
 public class Hospital {
-    private String name;
-    private String mapsId;
+    private String email = "";
+    private String name = "";
+    private String mapsId = "";
+
+    public Hospital(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getName() {
         return this.name;

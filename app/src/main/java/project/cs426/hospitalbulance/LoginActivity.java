@@ -10,9 +10,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import project.cs426.hospitalbulance.backend.Authenticator;
+import project.cs426.hospitalbulance.backend.database.Collections;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class LoginActivity extends AppCompatActivity {
     private final Authenticator authenticator = new Authenticator().setContext(this);
     private EditText emailEditText, passwordEditText;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +107,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserRole(String email) {
-        db.collection("client").whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
+        this.db.collection(Collections.USERS)
+                .whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this,
+                                        "Error checking role: " + task.getException().getMessage(),
+                                        Toast.LENGTH_LONG)
+                                .show();
+                        return;
+                    }
+
                     QuerySnapshot querySnapshot = task.getResult();
                     if (!querySnapshot.isEmpty()) {
                         DocumentSnapshot document = querySnapshot.getDocuments().get(0);
@@ -136,18 +148,14 @@ public class LoginActivity extends AppCompatActivity {
                                     break;
 
                                 default:
-                                    Toast.makeText(LoginActivity.this, "Unknown role.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoginActivity.this, "Unknown role.", Toast.LENGTH_LONG)
+                                            .show();
                                     break;
                             }
                         }
                     } else {
                         Toast.makeText(LoginActivity.this, "Client data not found.", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Error checking role: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
+                });
     }
 }

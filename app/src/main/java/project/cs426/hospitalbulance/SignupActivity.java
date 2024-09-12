@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import project.cs426.hospitalbulance.backend.Authenticator;
@@ -39,38 +40,8 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void createNewAccount(String userType) {
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    if (userType.equals("patient")) {
-                        Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                } else {
-                    Toast.makeText(SignupActivity.this, "Failed to create account: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    private String getSelectedRole() {
-        if (this.patientButton.isActivated()) {
-            return "patient";
-        }
-        if (this.ambulanceButton.isActivated()) {
-            return "ambulance_owner";
-        }
-        return "hospital";
-    }
-    
-    private void createNewAccount() {
-        String email = this.emailEditText.getText().toString();
-        String password = this.passwordEditText.getText().toString();
+        String email = this.emailEditText.getText().toString().trim();
+        String password = this.passwordEditText.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
             final String msg = "Cannot leave empty fields.";
@@ -84,12 +55,16 @@ public class SignupActivity extends AppCompatActivity {
                 .setOnCompleteListener(new Authenticator.OnCompleteListener() {
                     @Override
                     public void onSuccess() {
-                        Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
-                        startActivity(intent);
+                        if (userType.equals("patient")) {
+                            Intent intent = new Intent(SignupActivity.this, HomeScreenHomeActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
+
                     @Override
                     public void onFailure() {}
                 })
-                .signUp(getSelectedRole());
+                .signUp("patient");
     }
 }

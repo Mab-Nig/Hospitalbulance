@@ -1,11 +1,11 @@
 package project.cs426.hospitalbulance;
 
-public class HospitalTime {
+public class PlaceTime {
 
     private int duration;
     private String MapID;
 
-    public HospitalTime(String id, int time)
+    public PlaceTime(String id, int time)
     {
         duration = time;
         MapID = id;

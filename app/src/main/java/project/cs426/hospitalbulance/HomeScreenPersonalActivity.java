@@ -189,7 +189,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
     }
 
     
-    private void saveCredentials(String email, String password) {
+
 
     private void saveCredentials1(String email) {
 

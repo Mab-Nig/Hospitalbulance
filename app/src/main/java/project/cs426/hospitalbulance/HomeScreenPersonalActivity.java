@@ -1,6 +1,5 @@
 package project.cs426.hospitalbulance;
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -18,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -84,14 +85,34 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
           intent.putExtra("username", username);
             startActivity(intent);
         });
+
+        addSignOutListener();
     }
 
+    public void logoutClicked() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    private void addSignOutListener() {
+        FirebaseAuth.IdTokenListener signOutListener = auth -> {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser == null) {
+                Intent intent = new Intent(HomeScreenPersonalActivity.this, SignupActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        };
+        FirebaseAuth.getInstance().addIdTokenListener(signOutListener);
+    }
+    
     private void prepareContext(String username) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         TextView blood = findViewById(R.id.blood);
         TextView weight = findViewById(R.id.weight);
         TextView diabetic = findViewById(R.id.diabetic);
         TextView allergies = findViewById(R.id.allergies);
-        readData(username, blood, weight, diabetic, allergies);
+        readData(currentUser.getEmail(), blood, weight, diabetic, allergies);
     }
 
     private void readData(String username, TextView blood, TextView weight, TextView diabetic, TextView allergies) {
@@ -119,21 +140,15 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
 
                                     Number fallen = (Number) medicalInfo.get("fallen-cnt");
                                     boolean diabeticType = (boolean) medicalInfo.get("is-diabetic");
-                                    if(diabeticType)
-                                    {
+                                    if(diabeticType) {
                                         diabetic.setText("Diabetic - Yes");
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         diabetic.setText("Diabetic - No");
                                     }
 
-                                    if(fallen.intValue() > 0)
-                                    {
+                                    if(fallen.intValue() > 0) {
                                         allergies.setText("Allergies - " +String.valueOf(fallen));
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         allergies.setText("Allergies - None");
                                     }
                                 }
@@ -145,8 +160,6 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                                     weight.setText("Weight - " + String.valueOf(weightNum) + " kgs");
                                     Log.d("Weight", "Success" + weightNum);
                                 }
-
-
                             }
                         }
                     }
@@ -163,11 +176,9 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to logout?")
                 .setCancelable(true)
                 .setPositiveButton("Logout", (dialog, id) -> {
-                    Intent intent = new Intent(HomeScreenPersonalActivity.this,SignupActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    saveCredentials(username);
-                    startActivity(intent);
-                    finish();
+
+                    logoutClicked();
+
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> {
                     dialog.dismiss();
@@ -176,7 +187,12 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
     }
-    private void saveCredentials(String email) {
+
+    
+    private void saveCredentials(String email, String password) {
+
+    private void saveCredentials1(String email) {
+
         SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();

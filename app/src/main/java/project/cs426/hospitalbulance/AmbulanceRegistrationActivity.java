@@ -16,17 +16,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class AmbulanceRegistrationActivity extends AppCompatActivity {
+import project.cs426.hospitalbulance.backend.Authenticator;
 
+public class AmbulanceRegistrationActivity extends AppCompatActivity {
+    private final Authenticator authenticator = new Authenticator().setContext(this);
     private EditText emailEditText, passwordEditText;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ambulance_registration);
-
-        mAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -48,19 +47,22 @@ public class AmbulanceRegistrationActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    if (userType.equals("ambulance")) {
-                        Intent intent = new Intent(AmbulanceRegistrationActivity.this, HomeScreenHomeActivity.class);
-                        startActivity(intent);
-                        finish();
+        this.authenticator.setEmail(email)
+                .setPassword(password)
+                .setOnCompleteListener(new Authenticator.OnCompleteListener() {
+                    @Override
+                    public void onSuccess() {
+                        if (userType.equals("ambulance")) {
+                            Intent intent = new Intent(AmbulanceRegistrationActivity.this,
+                                    HomeScreenHomeDriverActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
-                } else {
-                    Toast.makeText(AmbulanceRegistrationActivity.this, "Failed to create account: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+
+                    @Override
+                    public void onFailure() {}
+                })
+                .signUp("ambulance");
     }
 }

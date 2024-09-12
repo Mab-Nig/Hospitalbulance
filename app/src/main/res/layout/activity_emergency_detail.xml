@@ -59,16 +59,6 @@
                 android:background="@color/white">
 
                 <TextView
-                    android:id="@+id/dispatchId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="Dispatch ID"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp" />
-
-                <TextView
                     android:id="@+id/caseType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,36 +83,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ambulance ID"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/ownerId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Owner ID"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/callId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Call ID"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/hospitalId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hospital ID"
                     android:textSize="18sp"
                     android:fontFamily="@font/poppins_regular"
                     android:textColor="@android:color/black"

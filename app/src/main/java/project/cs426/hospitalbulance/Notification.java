@@ -6,37 +6,27 @@ import android.os.Parcelable;
 public class Notification implements Parcelable {
     private String caseType;
     private String address;
-    private String ambulanceInfo;
-    private String ownerId;
-    private String callId;
-    private String dispatchId;
-    private String hospitalId;
+    private String carID;
     private String status;
     private long timestamp;  // Store timestamp as long for easier manipulation
+    private String callId;
 
-    public Notification(String caseType, String address, String ambulanceInfo, String ownerId,
-                        String callId, String dispatchId, String hospitalId, String status, long timestamp) {
+    public Notification(String caseType, String address, String carID, String status, long timestamp, String callId) {
         this.caseType = caseType;
         this.address = address;
-        this.ambulanceInfo = ambulanceInfo;
-        this.ownerId = ownerId;
-        this.callId = callId;
-        this.dispatchId = dispatchId;
-        this.hospitalId = hospitalId;
+        this.carID = carID;
         this.status = status;
         this.timestamp = timestamp;
+        this.callId = callId;
     }
 
     protected Notification(Parcel in) {
         caseType = in.readString();
         address = in.readString();
-        ambulanceInfo = in.readString();
-        ownerId = in.readString();
-        callId = in.readString();
-        dispatchId = in.readString();
-        hospitalId = in.readString();
+        carID = in.readString();
         status = in.readString();
         timestamp = in.readLong();
+        callId = in.readString();
     }
 
     public static final Creator<Notification> CREATOR = new Creator<Notification>() {
@@ -55,13 +45,10 @@ public class Notification implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(caseType);
         dest.writeString(address);
-        dest.writeString(ambulanceInfo);
-        dest.writeString(ownerId);
-        dest.writeString(callId);
-        dest.writeString(dispatchId);
-        dest.writeString(hospitalId);
+        dest.writeString(carID);
         dest.writeString(status);
         dest.writeLong(timestamp);
+        dest.writeString(callId);
     }
 
     @Override
@@ -69,7 +56,11 @@ public class Notification implements Parcelable {
         return 0;
     }
 
+    // Getters
     public String getCaseType() { return caseType; }
     public String getAddress() { return address; }
-    public String getDispatchId() { return dispatchId; }
+    public String getCarID() { return carID; }
+    public String getStatus() { return status; }
+    public long getTimestamp() { return timestamp; }
+    public String getCallId() { return callId; }
 }

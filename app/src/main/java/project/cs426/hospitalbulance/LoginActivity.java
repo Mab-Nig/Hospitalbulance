@@ -25,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
-    private final Authenticator authenticator = new Authenticator().setContext(this);
+
     private EditText emailEditText, passwordEditText;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -34,8 +34,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        this.emailEditText = findViewById(R.id.emailEditText);
-        this.passwordEditText = findViewById(R.id.passwordEditText);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
         ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
@@ -59,13 +62,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String email = this.emailEditText.getText().toString();
-        String password = this.passwordEditText.getText().toString();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            final String msg = "Cannot leave empty fields.";
-            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT)
-                    .show();
+        if (TextUtils.isEmpty(email)) {
+            emailEditText.setError("Email is required.");
+            emailEditText.requestFocus();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.setError("Please enter a valid email.");
+            emailEditText.requestFocus();
             return;
         }
 
@@ -129,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "patient":
                                     // Navigate to HomeScreenHomeActivity
                                     Intent userIntent = new Intent(LoginActivity.this, HomeScreenHomeActivity.class);
+                                    userIntent.putExtra("username", email);
                                     startActivity(userIntent);
                                     finish();
                                     break;
@@ -136,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "hospital":
                                     // Navigate to HospitalHomeScreen
                                     Intent hospitalIntent = new Intent(LoginActivity.this, HospitalHomeScreen.class);
+                                    hospitalIntent.putExtra("username", email);
                                     startActivity(hospitalIntent);
                                     finish();
                                     break;
@@ -143,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case "ambulance":
                                     // Handle ambulance case later
                                     Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    ambulanceIntent.putExtra("username", email);
                                     startActivity(ambulanceIntent);
                                     finish();
                                     break;

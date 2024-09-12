@@ -1,6 +1,7 @@
 package project.cs426.hospitalbulance;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -57,6 +58,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
 
     private GoogleMap mMap;
 
+    private String username = "";
+
     private String callID ="";
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -64,8 +67,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
     private String adultDetail = "1" ;
     private String childrenDetail= "0";
 
-   private int carStatus = 0;
-   //0  for available, 1 for on going, 2 for picking patient ,3 for going to hospital, 4 for arriving hospital
+    private int carStatus = 0;
+    //0  for available, 1 for on going, 2 for picking patient ,3 for going to hospital, 4 for arriving hospital
 
     private LatLng currentLocation;
     private FusedLocationProviderClient fusedLocationClient;
@@ -83,6 +86,9 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen_driver_home);
 
+        Intent getintent = getIntent();
+        username = getintent.getStringExtra("username");
+
         Button car_status = findViewById(R.id.car_status);
         car_status.setBackgroundColor(Color.parseColor("#00CF00"));
         car_status.setOnClickListener(this);
@@ -94,6 +100,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         Button call = findViewById(R.id.call_button);
         call.setBackgroundColor(Color.parseColor("#808080"));
 
+        findViewById(R.id.document_button).setOnClickListener(this);
+        findViewById(R.id.personal_button).setOnClickListener(this);
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -119,8 +127,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(adultNum.getText());
-                    if (!content.isEmpty() && !content.equals(adultDetail))
-                    {
+                    if (!content.isEmpty() && !content.equals(adultDetail)) {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
                         adultDetail = content;
@@ -136,8 +143,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(childNum.getText());
-                    if (!content.isEmpty() && !content.equals(childrenDetail))
-                    {
+                    if (!content.isEmpty() && !content.equals(childrenDetail)) {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
                         childrenDetail = content;
@@ -153,8 +159,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(caseEdit.getText());
-                    if (!content.isEmpty() && !content.equals(symtomsDetail))
-                    {
+                    if (!content.isEmpty() && !content.equals(symtomsDetail)) {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
                         symtomsDetail = content;
@@ -171,8 +176,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(status.getText());
-                    if (!content.isEmpty() && !content.equals(symtomsDetail))
-                    {
+                    if (!content.isEmpty() && !content.equals(symtomsDetail)) {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
                         symtomsDetail = content;
@@ -182,11 +186,9 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         });
 
         ConstraintLayout screen = findViewById(R.id.home_driver_Layout);
-        screen.setOnTouchListener(new View.OnTouchListener()
-        {
+        screen.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 // Clear focus from the EditText
                 stopEnter(adultNum);
                 stopEnter(childNum);
@@ -222,8 +224,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 }
 
                 if (value != null) {
-                    if(value.size() > 1)
-                    {
+                    if(value.size() > 1) {
                         //Call system error as 1 car is use for 2 call?
                         return;
                     }
@@ -321,47 +322,40 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
 
     @Override
     public void onClick(View v) {
-        if(v == findViewById(R.id.car_status))
-        {
+        if (v == findViewById(R.id.car_status)) {
             Button des = findViewById(R.id.car_status);
-            if(!Objects.equals(callID, "")) //ONLY CHANGE STATE WHEN HAVE A CALL
-            {
+            //ONLY CHANGE STATE WHEN HAVE A CALL
+            if (!Objects.equals(callID, "")) {
                 carStatus = (carStatus + 1)%5;
             }
             //0  for available, 1 for on going, 2 for picking patient ,3 for going to hospital, 4 for arriving hospital
-            switch (carStatus)
-            {
-                case 0:
-                {
+            switch (carStatus) {
+                case 0: {
                     des.setText("AVAILABLE");
                     des.setBackgroundColor(Color.parseColor("#00CF00"));
                     updateStatus("FINISH");
                     callID = "";
                     break;
                 }
-                case 1:
-                {
+                case 1: {
                     des.setText("ON GOING");
                     des.setBackgroundColor(Color.parseColor("#C53434"));
                     updateStatus("ON GOING");
                     break;
                 }
-                case 2:
-                {
+                case 2: {
                     des.setText("PICKING PATIENT");
                     des.setBackgroundColor(Color.parseColor("#C53434"));
                     updateStatus("PICKING PATIENT");
                     break;
                 }
-                case 3:
-                {
+                case 3: {
                     des.setText("GO TO HOSPITAL");
                     des.setBackgroundColor(Color.parseColor("#C53434"));
                     updateStatus("GO TO HOSPITAL");
                     break;
                 }
-                case 4:
-                {
+                case 4: {
                     des.setText("ARRIVE HOSPITAL");
                     des.setBackgroundColor(Color.parseColor("#C53434"));
                     updateStatus("ARRIVE HOSPITAL");
@@ -369,25 +363,36 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 }
             }
         }
-        else if(v == findViewById(R.id.confirm_button))
-        {
+        else if(v == findViewById(R.id.confirm_button)) {
             Button confirm = findViewById(R.id.confirm_button);
             confirm.setBackgroundColor(Color.parseColor("#00CF00"));
         }
+        else if(v == findViewById(R.id.document_button)) {
+            Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, HomeScreenRecordDriverActivity.class);
+            String carID = "59A-11111"; //Perform read carID here instead
+            myIntent.putExtra("carID", carID);
+            this.startActivity(myIntent);
+            finish();
+        }
+        else if(v == findViewById(R.id.personal_button)) {
+            Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, AmbulancePersonal.class);
+            String carID = "59A-11111"; //Perform read carID here instead
+            myIntent.putExtra("carID", carID);
+            this.startActivity(myIntent);
+            finish();
+            Log.d("HomeScreenHomeDriverActivity", "Personal button clicked");
+        }
+
     }
 
     private void updateStatus(String newStatus) {
-        if(!Objects.equals(callID, "")) {
+        if (!Objects.equals(callID, "")) {
             CollectionReference callsRef = firestore.collection("calls");
             DocumentReference docRef = callsRef.document(callID);
 
             docRef.update("status", newStatus)
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Status field updated successfully."))
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating status field", e));
-
-
         }
-
-
     }
 }

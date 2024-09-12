@@ -169,6 +169,7 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
                     }
 
                     //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListAmbulanceTimes
+
                 }
 
                 @Override

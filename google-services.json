@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "295681078083",
+    "project_id": "hospitalbulance",
+    "storage_bucket": "hospitalbulance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295681078083:android:df9943e3daac911eba75f6",
+        "android_client_info": {
+          "package_name": "project.cs426.hospitalbulance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295681078083-pn21lj3vom1v38k6bsbh2c681a808hpn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.cs426.hospitalbulance",
+            "certificate_hash": "066a6ae66f5132c32fde9932231e2e569a62e045"
+          }
+        },
+        {
+          "client_id": "295681078083-89qdfrhqs1d1cd13336243rq1virm2ta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXOe9tJDucFySn4B2hiuVTAXO1YFc4w2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295681078083-89qdfrhqs1d1cd13336243rq1virm2ta.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

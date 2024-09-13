@@ -368,5 +368,11 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
             Intent intent = new Intent(this, HomeScreenHomeActivity.class);
             this.startActivity(intent);
         }
+        else if(v == findViewById(R.id.personal_button))
+        {
+            Intent intent = new Intent(this, HomeScreenPersonalActivity.class);
+            //intent.putExtra("username", username);
+            this.startActivity(intent);
+        }
     }
 }

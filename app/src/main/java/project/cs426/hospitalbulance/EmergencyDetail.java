@@ -26,7 +26,7 @@ public class EmergencyDetail extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private TextView ambulanceId, caseType, status, timestamp, addressTextView, callId;
+    private TextView ambulanceId, caseType, status, timestamp, addressTextView, callId, adultsTextView, childrenTextView;
     private Button acceptButton;
     private ImageButton backButton;
     private String callDocumentId;
@@ -49,6 +49,8 @@ public class EmergencyDetail extends AppCompatActivity {
         status = findViewById(R.id.status);
         timestamp = findViewById(R.id.timestamp);
         addressTextView = findViewById(R.id.address);
+        adultsTextView = findViewById(R.id.adults);
+        childrenTextView = findViewById(R.id.children);
         acceptButton = findViewById(R.id.acceptButton);
         backButton = findViewById(R.id.backButton);
 
@@ -92,9 +94,8 @@ public class EmergencyDetail extends AppCompatActivity {
             return;
         }
 
-        // Listen for real-time updates from Firestore using the document ID
         callListener = db.collection("calls")
-                .document(callDocumentId)  // Direct document reference by ID
+                .document(callDocumentId)
                 .addSnapshotListener((documentSnapshot, e) -> {
                     if (e != null) {
                         Toast.makeText(EmergencyDetail.this, "Error fetching real-time updates.", Toast.LENGTH_SHORT).show();
@@ -102,19 +103,15 @@ public class EmergencyDetail extends AppCompatActivity {
                     }
 
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        // Get the address
                         String address = documentSnapshot.getString("address");
                         addressTextView.setText("Address: " + (address != null ? address : "N/A"));
 
-                        // Get ambulance ID from carID
                         String carID = documentSnapshot.getString("car_id");
                         ambulanceId.setText("Ambulance ID: " + (carID != null ? carID : "N/A"));
 
-                        // Get other individual fields
                         caseType.setText("Case: " + (documentSnapshot.getString("case") != null ? documentSnapshot.getString("case") : "N/A"));
                         status.setText("Status: " + (documentSnapshot.getString("status") != null ? documentSnapshot.getString("status") : "N/A"));
 
-                        // Format timestamp
                         Timestamp timestampValue = documentSnapshot.getTimestamp("timestamp");
                         if (timestampValue != null) {
                             Date date = timestampValue.toDate();
@@ -123,6 +120,13 @@ public class EmergencyDetail extends AppCompatActivity {
                         } else {
                             timestamp.setText("Timestamp: N/A");
                         }
+
+                        // Get adults and children
+                        int adults = documentSnapshot.getLong("adults") != null ? documentSnapshot.getLong("adults").intValue() : 0;
+                        int children = documentSnapshot.getLong("children") != null ? documentSnapshot.getLong("children").intValue() : 0;
+
+                        adultsTextView.setText("Number of adults: " + adults);
+                        childrenTextView.setText("Number of children: " + children);
                     } else {
                         Toast.makeText(EmergencyDetail.this, "No such call exists.", Toast.LENGTH_SHORT).show();
                     }
@@ -149,7 +153,7 @@ public class EmergencyDetail extends AppCompatActivity {
 
                         // Update Firestore to mark the call as accepted and set hospitalID
                         db.collection("calls").document(callDocumentId)
-                                .update("is_accepted", "true", "hospital_id", mapID)
+                                .update("is_accepted", true, "hospital_id", mapID)
                                 .addOnSuccessListener(aVoid -> {
                                     // Send the updated callDocumentId back to the HospitalHomeScreen
                                     Intent resultIntent = new Intent();

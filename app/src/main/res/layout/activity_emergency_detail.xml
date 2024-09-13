@@ -108,6 +108,25 @@
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="8dp" />
 
+                <TextView
+                    android:id="@+id/adults"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of adults"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/children"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of children"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

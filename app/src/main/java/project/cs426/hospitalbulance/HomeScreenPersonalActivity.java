@@ -37,6 +37,7 @@ import project.cs426.hospitalbulance.backend.database.Patient;
 public class HomeScreenPersonalActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
+    private String username ="";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
 
@@ -96,7 +97,8 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeScreenPersonalActivity.this, HomeScreenHomeActivity.class);
-
+                intent.putExtra("username", username);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
 
@@ -105,7 +107,8 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeScreenPersonalActivity.this, HomeScreenRecordActivity.class);
-
+                intent.putExtra("username", username);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
 
@@ -133,6 +136,7 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
     private void prepareContext() {
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        username = currentUser.getEmail();
 
         TextView blood = findViewById(R.id.blood);
         TextView weight = findViewById(R.id.weight);

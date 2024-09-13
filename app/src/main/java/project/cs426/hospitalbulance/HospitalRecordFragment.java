@@ -57,7 +57,6 @@ public class HospitalRecordFragment extends Fragment {
     private void listenForAcceptedNotifications() {
         String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-        // Fetch the hospital document where the email matches
         db.collection("hospitals")
                 .whereEqualTo("email", currentUserEmail)
                 .get()
@@ -66,9 +65,8 @@ public class HospitalRecordFragment extends Fragment {
                         DocumentSnapshot hospitalDocument = queryDocumentSnapshots.getDocuments().get(0);
                         String hospitalMapsId = hospitalDocument.getString("maps_id");
 
-                        // Accepted notifications where the hospital_id matches maps_id
                         recordListener = db.collection("calls")
-                                .whereEqualTo("is_accepted", "true")
+                                .whereEqualTo("is_accepted", true)
                                 .whereEqualTo("hospital_id", hospitalMapsId)
                                 .addSnapshotListener((queryDocumentSnapshots2, error) -> {
                                     if (error != null) {
@@ -84,7 +82,9 @@ public class HospitalRecordFragment extends Fragment {
                                                 document.getString("car_id"),
                                                 document.getString("status"),
                                                 document.getTimestamp("timestamp").toDate().getTime(),
-                                                document.getId()
+                                                document.getId(),
+                                                document.getLong("adults") != null ? document.getLong("adults").intValue() : 0,
+                                                document.getLong("children") != null ? document.getLong("children").intValue() : 0
                                         );
                                         recordList.add(notification);
                                     }

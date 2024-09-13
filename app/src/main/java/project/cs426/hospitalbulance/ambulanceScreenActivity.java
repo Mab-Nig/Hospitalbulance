@@ -46,6 +46,8 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
 
     private ArrayList<PlaceTime> listAmbulanceTimes;
 
+    private boolean is_call = false;
+
 
     private static final String TAG = "Directions";
     private static final String BASE_URL = "https://maps.googleapis.com/maps/api/";
@@ -93,6 +95,20 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
         Button call_taxi = findViewById(R.id.call_taxi);
         call_taxi.setBackgroundColor(Color.parseColor("#FFE434"));
 
+        findViewById(R.id.backArrowButton).setOnClickListener(this);
+
+        ImageView gifImageView = findViewById(R.id.gifImageView);
+
+        // Load GIF using Glide
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading)
+                .into(gifImageView);
+        TextView car_content = findViewById(R.id.car_finding_content);
+        car_content.setText("");
+
+        gifImageView.setVisibility(View.INVISIBLE);
+
         // Set up the AutocompleteSupportFragment
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -132,74 +148,89 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.addMarker(new MarkerOptions().position(currentLocation).title(USER_PLACE_NAME + currentLocation.latitude + currentLocation.longitude));
+        mMap.addMarker(new MarkerOptions().position(currentLocation).title(USER_PLACE_NAME));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
     }
 
     @Override
     public void onClick(View v) {
         if (v == findViewById(R.id.call_car_button)) {
-            ImageView gifImageView = findViewById(R.id.gifImageView);
+            if(!is_call) {
+                is_call = true;
+                Button call_car = findViewById(R.id.call_car_button);
+                call_car.setText("CANCEL");
 
-            // Load GIF using Glide
-            Glide.with(this)
-                    .asGif()
-                    .load(R.drawable.loading)
-                    .into(gifImageView);
-            TextView car_content = findViewById(R.id.car_finding_content);
-            car_content.setText("");
-            // make a request to server using USER_PLACE_ID and USER_PLACE_NAME
-            // When finding car, update car ID, car model, ambulance owner
+                ImageView gifImageView = findViewById(R.id.gifImageView);
+                gifImageView.setVisibility(View.VISIBLE);
 
-            //DETAIL:
-            //PERFORM READING all hospital + AMBULANCE places
+                // make a request to server using USER_PLACE_ID and USER_PLACE_NAME
+                // When finding car, update car ID, car model, ambulance owner
 
-            AmbulanceWithDurations findAmbulance = new AmbulanceWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
-                @Override
-                public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
-                    listAmbulanceTimes = placeTimes;
-                    // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
-                    listAmbulanceTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
-                    //Already sort from fastest to lowest route to different ambulances
+                //DETAIL:
+                //PERFORM READING all hospital + AMBULANCE places
 
-                    Log.d("CHECK SIZE", "onPlaceTimesReady: " + listAmbulanceTimes.size());
-                    // Print sorted list for verification
-                    for (PlaceTime ht : listAmbulanceTimes) {
-                        Log.d("CHECK SORT AMBULANCE", "Duration in sec " + ht.getDuration());
+                AmbulanceWithDurations findAmbulance = new AmbulanceWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
+                    @Override
+                    public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
+                        listAmbulanceTimes = placeTimes;
+                        // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
+                        listAmbulanceTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
+                        //Already sort from fastest to lowest route to different ambulances
+
+                        Log.d("CHECK SIZE", "onPlaceTimesReady: " + listAmbulanceTimes.size());
+                        // Print sorted list for verification
+                        for (PlaceTime ht : listAmbulanceTimes) {
+                            Log.d("CHECK SORT AMBULANCE", "Duration in sec " + ht.getDuration());
+                        }
+
+                        //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListAmbulanceTimes
+
                     }
 
-                    //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListAmbulanceTimes
+                    @Override
+                    public void onError(String errorMessage) {
+                        // Handle the error case
+                        Log.e(TAG, "Error: " + errorMessage);
+                    }
+                });
+                HospitalWithDurations findHospital = new HospitalWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
+                    @Override
+                    public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
+                        listHospitalTimes = placeTimes;
+                        // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
+                        listHospitalTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
+                        //Already sort from fastest to lowest route to different hospitals
+                        // Print sorted list for verification
 
-                }
+                        for (PlaceTime ht : listHospitalTimes) {
+                            Log.d("CHECK SORT HOSPITAL", "Duration in sec " + ht.getDuration());
+                        }
 
-                @Override
-                public void onError(String errorMessage) {
-                    // Handle the error case
-                    Log.e(TAG, "Error: " + errorMessage);
-                }
-            });
-            HospitalWithDurations findHospital = new HospitalWithDurations(USER_PLACE_ID, new PlaceTimesCallback() {
-                @Override
-                public void onPlaceTimesReady(ArrayList<PlaceTime> placeTimes) {
-                    listHospitalTimes = placeTimes;
-                    // Can access mapID and duration to go to a hospital: ex hospitalTimes.get(0).get
-                    listHospitalTimes.sort(Comparator.comparingInt(PlaceTime::getDuration));
-                    //Already sort from fastest to lowest route to different hospitals
-                    // Print sorted list for verification
-
-                    for (PlaceTime ht : listHospitalTimes) {
-                        Log.d("CHECK SORT HOSPITAL", "Duration in sec " + ht.getDuration());
+                        //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListHospitalTimes
                     }
 
-                    //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListHospitalTimes
-                }
+                    @Override
+                    public void onError(String errorMessage) {
+                        // Handle the error case
+                        Log.e(TAG, "Error: " + errorMessage);
+                    }
+                });
+            }
+            else {
+                is_call = false;
+                Button call_car = findViewById(R.id.call_car_button);
+                call_car.setText("CALL");
 
-                @Override
-                public void onError(String errorMessage) {
-                // Handle the error case
-                Log.e(TAG, "Error: " + errorMessage);
-                }
-            });
+                ImageView gifImageView = findViewById(R.id.gifImageView);
+                gifImageView.setVisibility(View.INVISIBLE);
+
+
+                //LOOK FOR THE CALL AND SET THE PROCESS TO CANCEL
+            }
+        }
+        else if (v == findViewById(R.id.backArrowButton))
+        {
+            onBackPressed();
         }
     }
 }

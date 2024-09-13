@@ -11,11 +11,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+
+import project.cs426.hospitalbulance.backend.database.BodyMeasurements;
+import project.cs426.hospitalbulance.backend.database.Collections;
+import project.cs426.hospitalbulance.backend.database.MedicalInfo;
+import project.cs426.hospitalbulance.backend.database.Patient;
+import project.cs426.hospitalbulance.backend.database.PatientInfo;
 
 public class EditInfo extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -24,7 +35,7 @@ public class EditInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_info);
         EditText firstName = findViewById(R.id.first_name);
-        EditText lastName = findViewById(R.id.last_name);
+
         EditText email = findViewById(R.id.email);
         EditText bloodType = findViewById(R.id.blood_type);
         EditText address = findViewById(R.id.address);
@@ -37,14 +48,14 @@ public class EditInfo extends AppCompatActivity {
 
 // Get Firestore instance
         db = FirebaseFirestore.getInstance();
-        Intent intent_sup = getIntent();
-        String username = intent_sup.getStringExtra("username");
-        readDataGeneral(username,firstName,lastName,email,bloodType,address);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String username = currentUser.getEmail();
+        readDataGeneral(username,firstName,email,bloodType,address);
 
         savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                writeDataGeneral(username,firstName, lastName, email, bloodType, address);
+                writeDataGeneral(username,firstName,email, bloodType, address);
             }
         });
         findViewById(R.id.back_edit).setOnClickListener(new View.OnClickListener() {
@@ -54,118 +65,69 @@ public class EditInfo extends AppCompatActivity {
             }
         });
     }
-    private void readDataGeneral(String username,EditText firstName, EditText lastName, EditText email, EditText bloodType, EditText address) {
-        CollectionReference usersRef = db.collection("users");
-        usersRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d("Firestore", ":InsideReadData");
-                for (QueryDocumentSnapshot document : task.getResult()) {
 
-                    // Access the 'login-info' map
-                    Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
-                    Map<String, Object> generalInfo = (Map<String, Object>) document.get("general-info");
-
-                    if (loginInfo != null) {
-                        // Example: Access fields in 'login-info' map
-                        String username_get = (String) loginInfo.get("username");
-                        // Check and use the data
-                        if (username_get != null) {
-                            Log.d("Firestore", "User ID: " + document.getId() +
-                                    " Username: " + username_get);
-                            if (username_get.equals(username)) {
-
+    private void readDataGeneral(String username,EditText firstName, EditText email, EditText bloodType, EditText address) {
+        this.db.collection(Collections.PATIENTS)
+                .whereEqualTo("email",username)
+                .get()
+                .addOnSuccessListener(querySnapshot-> {
+                    for (DocumentSnapshot result : querySnapshot.getDocuments()) {
+                        Patient man = result.toObject(Patient.class);
+                        MedicalInfo medicalInfo = man.getMedicalInfo();
+                        PatientInfo patientInfo = man.getInfo();
+                        if(man != null)
+                        {
+                            email.setText(man.getEmail());
+                        }
+                        if(patientInfo != null)
+                        {
+                            firstName.setText(patientInfo.getName());
+                            address.setText(patientInfo.getBirthDate().toString());
+                        }
+                        if (medicalInfo != null) {
+                            BodyMeasurements bodyMeasurements = medicalInfo.getBodyMeasurements();
+                            if (bodyMeasurements != null) {
+                                bloodType.setText(bodyMeasurements.getBloodType());
                             }
-                            if (generalInfo != null) {
-                                String bloodType_str = (String) generalInfo.get("blood-type");
-                                bloodType.setText(bloodType_str + " +ve");
-                                Log.d("Blood", "Success" + bloodType_str);
-
-                                String firstName_str = (String) generalInfo.get("first-name");
-                                firstName.setText(firstName_str);
-                                Log.d("FirstName", "Success" + firstName_str);
-
-                                String lastName_str = (String) generalInfo.get("last-name");
-                                lastName.setText(lastName_str);
-                                Log.d("LastName", "Success" + lastName_str);
-
-
-                                email.setText(username);
-
-
-                                String address_str = (String) generalInfo.get("address");
-                                address.setText(address_str);
-                                Log.d("Address", "Success" + address_str);
-
-                            }
-
-
                         }
                     }
-
-                }
-            } else {
-                Log.e("Firestore", "Error getting documents: ", task.getException());
-            }
-        });
-        }
-    private void writeDataGeneral(String username,EditText firstName, EditText lastName, EditText email, EditText bloodType, EditText address) {
-        CollectionReference usersRef = db.collection("users");
-        usersRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d("Firestore", ":InsideReadData");
-                for (QueryDocumentSnapshot document : task.getResult()) {
-
-                    // Access the 'login-info' map
-                    Map<String, Object> loginInfo = (Map<String, Object>) document.get("login-info");
-                    Map<String, Object> generalInfo = (Map<String, Object>) document.get("general-info");
-
-                    if (loginInfo != null) {
-                        // Example: Access fields in 'login-info' map
-                        String username_get = (String) loginInfo.get("username");
-                        // Check and use the data
-                        if (username_get != null) {
-                            Log.d("Firestore", "User ID: " + document.getId() +
-                                    " Username: " + username_get);
-                            if (username_get.equals(username)) {
-
-                            }
-                            if (generalInfo != null) {
-                                String bloodType_str = (String) generalInfo.get("blood-type");
-                                bloodType.setText(bloodType_str + " +ve");
-
-
-                                String firstName_str = (String) generalInfo.get("first-name");
-                                firstName.setText(firstName_str);
-
-
-                                String lastName_str = (String) generalInfo.get("last-name");
-                                lastName.setText(lastName_str);
-
-
-
-                                email.setText(username);
-
-
-                                String address_str = (String) generalInfo.get("address");
-                                address.setText(address_str);
-                                db.collection("users").document(username).update("general-info/blood-type", bloodType.getText().toString());
-                                db.collection("users").document(username).update("general-info/first-name", firstName.getText().toString());
-                                db.collection("users").document(username).update("general-info/last-name", lastName.getText().toString());
-                                db.collection("users").document(username).update("general-info/address", address.getText().toString());
-                                db.collection("users").document(username).update("login-info/username", email.getText().toString());
-                                break;
-
-                            }
-
-
-                        }
-                    }
-
-                }
-            } else {
-                Log.e("Firestore", "Error getting documents: ", task.getException());
-            }
-        });
+                });
     }
+    private void writeDataGeneral(String username,EditText firstName, EditText email, EditText bloodType, EditText address) {
+        this.db.collection(Collections.PATIENTS)
+                .whereEqualTo("email", username)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        // Extract the document ID
+                        String documentId = document.getId();
+
+                        // Create a map to store updated fields
+                        Map<String, Object> updates = new HashMap<>();
+
+
+                        updates.put("medical_info.body_measurements.blood_type", bloodType.getText().toString());
+
+
+
+                        updates.put("email", email.getText().toString());
+                        updates.put("info.name", firstName.getText().toString());
+
+
+
+                        // Perform the update
+                        this.db.collection(Collections.PATIENTS)
+                                .document(documentId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("UPDATE DATA FIREBASE", "Patient data has been successfully updated!");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("UPDATE DATA FIREBASE", "Error updating patient data", e);
+                                });
+                    }
+                });
+    }
+
 
 }

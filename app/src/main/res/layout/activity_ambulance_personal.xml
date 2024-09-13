@@ -103,6 +103,7 @@
         android:src="@drawable/taskbar">
     </ImageView>
     <ImageButton
+        android:id = "@+id/btn_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -112,6 +113,7 @@
         android:background="@drawable/home_icon_white_quan" />
 
     <ImageButton
+        android:id = "@+id/btn_document"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

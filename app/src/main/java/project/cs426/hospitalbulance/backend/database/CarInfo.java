@@ -4,6 +4,8 @@ public class CarInfo {
     private String id = "";
     private String model = "";
 
+    public CarInfo() {
+    }
     public String getId() {
         return id;
     }

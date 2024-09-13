@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -53,27 +55,47 @@ public class HospitalRecordFragment extends Fragment {
     }
 
     private void listenForAcceptedNotifications() {
-        recordListener = db.collection("calls")
-                .whereEqualTo("is_accepted", "true")
-                .addSnapshotListener((queryDocumentSnapshots, error) -> {
-                    if (error != null) {
-                        Toast.makeText(getContext(), "Error fetching records.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-                    recordList.clear();
-                    for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        Notification notification = new Notification(
-                                document.getString("case"),
-                                document.getString("address"),
-                                document.getString("car_id"),
-                                document.getString("status"),
-                                document.getTimestamp("timestamp").toDate().getTime(),
-                                document.getId()
-                        );
-                        recordList.add(notification);
+        // Fetch the hospital document where the email matches
+        db.collection("hospitals")
+                .whereEqualTo("email", currentUserEmail)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot hospitalDocument = queryDocumentSnapshots.getDocuments().get(0);
+                        String hospitalMapsId = hospitalDocument.getString("maps_id");
+
+                        // Accepted notifications where the hospital_id matches maps_id
+                        recordListener = db.collection("calls")
+                                .whereEqualTo("is_accepted", "true")
+                                .whereEqualTo("hospital_id", hospitalMapsId)
+                                .addSnapshotListener((queryDocumentSnapshots2, error) -> {
+                                    if (error != null) {
+                                        Toast.makeText(getContext(), "Error fetching records.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    recordList.clear();
+                                    for (DocumentSnapshot document : queryDocumentSnapshots2) {
+                                        Notification notification = new Notification(
+                                                document.getString("case"),
+                                                document.getString("address"),
+                                                document.getString("car_id"),
+                                                document.getString("status"),
+                                                document.getTimestamp("timestamp").toDate().getTime(),
+                                                document.getId()
+                                        );
+                                        recordList.add(notification);
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                });
+                    } else {
+                        Toast.makeText(getContext(), "No hospital record found for this user.", Toast.LENGTH_SHORT).show();
                     }
-                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error fetching hospital data.", Toast.LENGTH_SHORT).show();
                 });
     }
 

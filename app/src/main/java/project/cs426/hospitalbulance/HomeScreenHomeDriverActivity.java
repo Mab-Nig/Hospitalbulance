@@ -63,7 +63,9 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
     private String callID ="";
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private String symtomsDetail = "";
+    private String statusDetail = "";
+
+    private String caseDetail = "";
     private String adultDetail = "1" ;
     private String childrenDetail= "0";
 
@@ -161,11 +163,11 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(caseEdit.getText());
-                    if (!content.isEmpty() && !content.equals(symtomsDetail))
+                    if (!content.isEmpty() && !content.equals(caseDetail))
                     {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
-                        symtomsDetail = content;
+                        caseDetail = content;
                     }
                 }
             }
@@ -179,11 +181,11 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                 } else {
                     // EditText lost focus
                     String content = String.valueOf(status.getText());
-                    if (!content.isEmpty() && !content.equals(symtomsDetail))
+                    if (!content.isEmpty() && !content.equals(statusDetail))
                     {
                         Button cf = findViewById(R.id.confirm_button);
                         cf.setBackgroundColor(Color.parseColor("#808080"));
-                        symtomsDetail = content;
+                        statusDetail = content;
                     }
                 }
             }
@@ -216,9 +218,78 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         });
         //Read request, if this car have a request, get the location of Caller
 
+
+
+    }
+
+    public void onMapReady(GoogleMap googleMap)
+    {
+        mMap = googleMap;
+
+
+        // Check for location permission
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            return;
+        }
+
+        mMap.setMyLocationEnabled(true);
+
+        // Get last known location and update the marker
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                getPlaceIdFromLocation(location);
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(currentLocation).title("You are here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            }
+        });
+
         CollectionReference callsRef = firestore.collection("calls");
-        Query query = callsRef.whereEqualTo("carID", "59A-11111")
-                .whereEqualTo("status", "waiting");
+        Query query1 = callsRef.whereEqualTo("car_id", "59A-11111")
+                .whereEqualTo("process", "cancel");
+
+        query1.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                if (value != null) {
+                    if(value.size() > 1)
+                    {
+                        //Can be 2 call cancel?
+                        // return;
+                    }
+                    // Process the data from the Firestore snapshot
+                    for (DocumentSnapshot doc : value) {
+                        Button status = findViewById(R.id.car_status);
+                        status.setText("AVAILABLE");
+                        status.setBackgroundColor(Color.parseColor("#00CF00"));
+                        carStatus = 0;
+                        Button call = findViewById(R.id.call_button);
+                        call.setBackgroundColor(Color.parseColor("#808080"));
+                        DocumentReference cancleCall = doc.getReference();
+                        cancleCall.delete();
+                        //delete call in database
+                        LatLng NullLocation = new LatLng(0, 0);
+                        mMap.addMarker(new MarkerOptions().position(NullLocation).title("Call has been cancel"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(NullLocation, 15));
+                        //set_car_available to true
+                    }
+                    // Use or display the data as needed
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
+
+
+        Query query = callsRef.whereEqualTo("car_id", "59A-11111")
+                .whereEqualTo("process", "waiting");
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -248,35 +319,10 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
                         Button call = findViewById(R.id.call_button);
                         call.setBackgroundColor(Color.parseColor("#00CF00"));
                     }
-                        // Use or display the data as needed
+                    // Use or display the data as needed
                 } else {
                     Log.d(TAG, "Current data: null");
                 }
-            }
-        });
-
-    }
-
-    public void onMapReady(GoogleMap googleMap)
-    {
-        mMap = googleMap;
-
-
-        // Check for location permission
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-            return;
-        }
-
-        mMap.setMyLocationEnabled(true);
-
-        // Get last known location and update the marker
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                getPlaceIdFromLocation(location);
-                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(currentLocation).title("You are here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
             }
         });
     }
@@ -388,7 +434,6 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
             String carID = "59A-11111"; //Perform read carID here instead
             myIntent.putExtra("carID", carID);
             this.startActivity(myIntent);
-            finish();
         }
         else if(v == findViewById(R.id.personal_button))
         {
@@ -397,7 +442,6 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
             myIntent.putExtra("carID", carID);
             myIntent.putExtra("username",username);
             this.startActivity(myIntent);
-            finish();
             Log.d("HomeScreenHomeDriverActivity", "Personal button clicked");
         }
 
@@ -408,7 +452,7 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
             CollectionReference callsRef = firestore.collection("calls");
             DocumentReference docRef = callsRef.document(callID);
 
-            docRef.update("status", newStatus)
+            docRef.update("process", newStatus)
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Status field updated successfully."))
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating status field", e));
 

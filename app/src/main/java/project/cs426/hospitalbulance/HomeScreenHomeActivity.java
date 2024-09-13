@@ -46,6 +46,8 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     private FusedLocationProviderClient fusedLocationClient;
     private final int LOCATION_REQUEST_CODE = 1000;
 
+    private boolean isCancel = false;
+
     private String username = "";
     private double currentLat;
     private double currentLong;
@@ -248,10 +250,10 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
                 }
               else
               {
-                  Toast.makeText(this, "Can not find your place1!", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();
               }
             }).addOnFailureListener(this, location -> {
-                Toast.makeText(this, "Can not find your place2!", Toast.LENGTH_SHORT).show();;
+                Toast.makeText(this, "Can not find your place!", Toast.LENGTH_SHORT).show();;
             });
     }
 
@@ -265,6 +267,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         else if (v == findViewById(R.id.call_button))
         {
             ImageView gifImageView = findViewById(R.id.gifImageView);
+            isCancel = false;
 
             // Load GIF using Glide
             Glide.with(this)
@@ -287,7 +290,8 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         {
             ImageView gifImageView = findViewById(R.id.gifImageView);
             gifImageView.setVisibility(View.INVISIBLE);
-            //handle stop finding car
+            isCancel = true;
+
         }
         else if(v == findViewById(R.id.personal_button))
         {
@@ -317,12 +321,15 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
                         String placeId = results.get(0).place_id; // Get the first result's Place ID
                         Log.d(TAG, "Place ID: " + placeId);
                         USER_PLACE_ID = placeId;
-                        Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
-                        myIntent.putExtra("placeID", USER_PLACE_ID);
-                        myIntent.putExtra("PlaceName", results.get(0).name);
-                        myIntent.putExtra("lat", currentLat); //Optional parameters
-                        myIntent.putExtra("long", currentLong);
-                        startActivity(myIntent);
+                        if (!isCancel)
+                        {
+                            Intent myIntent = new Intent(HomeScreenHomeActivity.this, ambulanceScreenActivity.class);
+                            myIntent.putExtra("placeID", USER_PLACE_ID);
+                            myIntent.putExtra("PlaceName", results.get(0).name);
+                            myIntent.putExtra("lat", currentLat); //Optional parameters
+                            myIntent.putExtra("long", currentLong);
+                            startActivity(myIntent);
+                        }
                         // Use the place ID as needed
                     } else {
                         Log.e(TAG, "No places found near the location.");

@@ -99,6 +99,8 @@
             android:exported="true"/>
         <activity android:name=".AmbulancePersonal"
             android:exported="true"/>
+        <activity android:name=".DriverScreen"
+            android:exported="true"/>
 
     </application>
 

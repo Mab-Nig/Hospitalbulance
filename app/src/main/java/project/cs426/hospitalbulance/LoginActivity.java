@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 case "ambulance":
                                     // Handle ambulance case later
-                                    Intent ambulanceIntent = new Intent(LoginActivity.this, HomeScreenHomeDriverActivity.class);
+                                    Intent ambulanceIntent = new Intent(LoginActivity.this, DriverScreen.class);
                                     ambulanceIntent.putExtra("username", email);
                                     startActivity(ambulanceIntent);
                                     finish();

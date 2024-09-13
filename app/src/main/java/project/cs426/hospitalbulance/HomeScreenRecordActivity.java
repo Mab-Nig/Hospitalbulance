@@ -112,7 +112,7 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         readMedications(username, details1);
 
 
-        //read sympton
+        //read sympto
         readSympton(username, details2);
 
         //read other data

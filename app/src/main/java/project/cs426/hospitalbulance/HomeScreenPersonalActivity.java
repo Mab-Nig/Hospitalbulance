@@ -92,7 +92,24 @@ public class HomeScreenPersonalActivity extends AppCompatActivity {
 
             startActivity(intent);
         });
+        findViewById(R.id.home_icon_personal).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeScreenPersonalActivity.this, HomeScreenHomeActivity.class);
 
+                startActivity(intent);
+            }
+
+        });
+        findViewById(R.id.document_icon_personal).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeScreenPersonalActivity.this, HomeScreenRecordActivity.class);
+
+                startActivity(intent);
+            }
+
+        });
         addSignOutListener();
     }
 

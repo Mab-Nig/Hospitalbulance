@@ -7,6 +7,9 @@ public class Patient {
     private PatientInfo info = new PatientInfo();
     private MedicalInfo medicalInfo = new MedicalInfo();
 
+    public Patient() {
+        // Default constructor required for calls to DataSnapshot.getValue(Patient.class)
+    }
     public Patient(String email) {
         this.email = email;
     }

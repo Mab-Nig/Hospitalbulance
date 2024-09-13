@@ -11,5 +11,5 @@
     <item
         android:id="@+id/editinfo"
         android:icon="@drawable/ic_edit_hospital_info"
-        android:title="Edit Information" />
+        android:title="Personal Information" />
 </menu>

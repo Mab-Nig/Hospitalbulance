@@ -16,6 +16,14 @@ public class Call {
     private boolean isAccepted = false;
     private Date timestamp = new Date();
 
+    private int children = 0;
+
+    private int adults = 0;
+
+    private String maps_id = "";
+
+    private String process = "waiting";
+
     @PropertyName("caller_email")
     public String getCallerEmail() {
         return callerEmail;
@@ -95,5 +103,37 @@ public class Call {
 @PropertyName("case")
     public void setCases(String cases) {
         this.cases = cases;
+    }
+
+    public String getMaps_id() {
+        return maps_id;
+    }
+
+    public void setMaps_id(String maps_id) {
+        this.maps_id = maps_id;
+    }
+
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
+    public int getChildren() {
+        return children;
+    }
+
+    public void setChildren(int children) {
+        this.children = children;
+    }
+
+    public int getAdults() {
+        return adults;
+    }
+
+    public void setAdults(int adults) {
+        this.adults = adults;
     }
 }

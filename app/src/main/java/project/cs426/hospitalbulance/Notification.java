@@ -8,16 +8,20 @@ public class Notification implements Parcelable {
     private String address;
     private String carID;
     private String status;
-    private long timestamp;  // Store timestamp as long for easier manipulation
+    private long timestamp;
     private String callId;
+    private int adults;
+    private int children;
 
-    public Notification(String caseType, String address, String carID, String status, long timestamp, String callId) {
+    public Notification(String caseType, String address, String carID, String status, long timestamp, String callId, int adults, int children) {
         this.caseType = caseType;
         this.address = address;
         this.carID = carID;
         this.status = status;
         this.timestamp = timestamp;
         this.callId = callId;
+        this.adults = adults;
+        this.children = children;
     }
 
     protected Notification(Parcel in) {
@@ -27,6 +31,8 @@ public class Notification implements Parcelable {
         status = in.readString();
         timestamp = in.readLong();
         callId = in.readString();
+        adults = in.readInt();
+        children = in.readInt();
     }
 
     public static final Creator<Notification> CREATOR = new Creator<Notification>() {
@@ -49,6 +55,8 @@ public class Notification implements Parcelable {
         dest.writeString(status);
         dest.writeLong(timestamp);
         dest.writeString(callId);
+        dest.writeInt(adults);   // Write the number of adults to the parcel
+        dest.writeInt(children); // Write the number of children to the parcel
     }
 
     @Override
@@ -63,4 +71,6 @@ public class Notification implements Parcelable {
     public String getStatus() { return status; }
     public long getTimestamp() { return timestamp; }
     public String getCallId() { return callId; }
+    public int getAdults() { return adults; }
+    public int getChildren() { return children; }
 }

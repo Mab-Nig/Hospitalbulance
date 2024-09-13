@@ -65,4 +65,6 @@ public class Ambulance {
     public void setMapID(String mapID) {
         this.mapID = mapID;
     }
+
 }
+

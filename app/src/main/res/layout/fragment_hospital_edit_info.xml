@@ -80,7 +80,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@id/bottomNavigationView"
+        android:layout_below="@id/saveInfoButton"
+        android:layout_marginTop="200dp"
         android:layout_marginBottom="20dp">
 
         <!-- Logout Icon -->
@@ -104,14 +105,5 @@
             android:layout_toEndOf="@id/logoutButton"
             android:layout_marginStart="10dp" />
     </RelativeLayout>
-
-    <!-- Bottom Navigation View -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/red"
-        app:menu="@menu/navigation_menu" />
 
 </RelativeLayout>

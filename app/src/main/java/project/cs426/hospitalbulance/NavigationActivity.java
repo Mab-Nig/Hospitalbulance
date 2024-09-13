@@ -9,12 +9,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import android.content.SharedPreferences;
+
 public class NavigationActivity extends AppCompatActivity {
     ViewPager slideViewPager;
     LinearLayout dotIndicator;
     Button backButton, nextButton, skipButton;
     TextView[] dots;
     ViewPagerAdapter viewPagerAdapter;
+
+    private static final String PREFS_NAME = "onboarding_prefs";
+    private static final String KEY_ONBOARDING_COMPLETE = "onboarding_complete";
+
     ViewPager.OnPageChangeListener viewPagerListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -37,13 +43,25 @@ public class NavigationActivity extends AppCompatActivity {
         public void onPageScrollStateChanged(int state) {
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check if onboarding is complete, if yes, skip the NavigationActivity
+        if (isOnboardingCompleted()) {
+            // Onboarding already completed, launch WelcomeScreen directly
+            Intent i = new Intent(NavigationActivity.this, WelcomeScreen.class);
+            startActivity(i);
+            finish();
+            return;  // Skip further initialization
+        }
+
         setContentView(R.layout.activity_navigation);
         backButton = findViewById(R.id.backButton);
         nextButton = findViewById(R.id.nextButton);
         skipButton = findViewById(R.id.skipButton);
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,26 +70,33 @@ public class NavigationActivity extends AppCompatActivity {
                 }
             }
         });
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getItem(0) < 2)
                     slideViewPager.setCurrentItem(getItem(1), true);
                 else {
+                    // Onboarding is complete, mark it in SharedPreferences
+                    setOnboardingCompleted();
                     Intent i = new Intent(NavigationActivity.this, WelcomeScreen.class);
                     startActivity(i);
                     finish();
                 }
             }
         });
+
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(NavigationActivity.this,WelcomeScreen.class);
+                // Onboarding is complete, mark it in SharedPreferences
+                setOnboardingCompleted();
+                Intent i = new Intent(NavigationActivity.this, WelcomeScreen.class);
                 startActivity(i);
                 finish();
             }
         });
+
         slideViewPager = (ViewPager) findViewById(R.id.slideViewPager);
         dotIndicator = (LinearLayout) findViewById(R.id.dotIndicator);
         viewPagerAdapter = new ViewPagerAdapter(this);
@@ -79,6 +104,21 @@ public class NavigationActivity extends AppCompatActivity {
         setDotIndicator(0);
         slideViewPager.addOnPageChangeListener(viewPagerListener);
     }
+
+    // Method to check if onboarding has been completed
+    private boolean isOnboardingCompleted() {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return preferences.getBoolean(KEY_ONBOARDING_COMPLETE, false);
+    }
+
+    // Method to mark onboarding as completed
+    private void setOnboardingCompleted() {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(KEY_ONBOARDING_COMPLETE, true);
+        editor.apply(); // Save changes
+    }
+
     public void setDotIndicator(int position) {
         dots = new TextView[3];
         dotIndicator.removeAllViews();
@@ -91,6 +131,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
         dots[position].setTextColor(getResources().getColor(R.color.red, getApplicationContext().getTheme()));
     }
+
     private int getItem(int i) {
         return slideViewPager.getCurrentItem() + i;
     }

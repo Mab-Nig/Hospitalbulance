@@ -34,6 +34,8 @@ import project.cs426.hospitalbulance.backend.database.Patient;
 
 public class HomeScreenRecordActivity extends AppCompatActivity implements View.OnClickListener {
 
+
+    private String username ="";
     private FirebaseFirestore db;
     private  RecyclerView bodyDetail ;
     private RecyclerView medicationDetail ;
@@ -52,7 +54,7 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
         prepareContent(username);
         Button save = findViewById(R.id.save_button);
         save.setBackgroundColor(Color.parseColor("#808080"));
@@ -366,12 +368,15 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         else if(v == findViewById(R.id.home_button))
         {
             Intent intent = new Intent(this, HomeScreenHomeActivity.class);
+            intent.putExtra("username", username);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             this.startActivity(intent);
         }
         else if(v == findViewById(R.id.personal_button))
         {
             Intent intent = new Intent(this, HomeScreenPersonalActivity.class);
-            //intent.putExtra("username", username);
+            intent.putExtra("username", username);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             this.startActivity(intent);
         }
     }

@@ -3,15 +3,12 @@ package project.cs426.hospitalbulance.backend.database;
 import com.google.firebase.firestore.PropertyName;
 
 public class Ambulance {
-    private String carID="";
-
-    private String carModel ="";
     private String email = "";
+    private String ownerEmail = "";
+    private String carID="";
+    private String carModel ="";
     private String mapID = "";
     private boolean isAvailable = true;
-
-    public Ambulance()
-    {}
 
     public Ambulance(String email) {
         this.email = email;
@@ -66,5 +63,14 @@ public class Ambulance {
         this.mapID = mapID;
     }
 
+    @PropertyName("owner_email")
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    @PropertyName("owner_email")
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
 }
 

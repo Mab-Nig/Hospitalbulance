@@ -1,5 +1,6 @@
 package project.cs426.hospitalbulance;
 
+import project.cs426.hospitalbulance.backend.database.Collections;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -28,22 +29,21 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class ambulanceScreenActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
-
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String USER_PLACE_NAME;
     private GoogleMap mMap;
     private LatLng currentLocation;
 
-    private FirebaseFirestore db;
-
     private ArrayList<PlaceTime> listHospitalTimes ;
-
     private ArrayList<PlaceTime> listAmbulanceTimes;
 
     private boolean is_call = false;
@@ -178,13 +178,8 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
                         //Already sort from fastest to lowest route to different ambulances
 
                         Log.d("CHECK SIZE", "onPlaceTimesReady: " + listAmbulanceTimes.size());
-                        // Print sorted list for verification
-                        for (PlaceTime ht : listAmbulanceTimes) {
-                            Log.d("CHECK SORT AMBULANCE", "Duration in sec " + ht.getDuration());
-                        }
-
                         //PERFORM SENDING REQUEST FINDING HOSPITAL AVAILABLE ON SYSTEM WITH FASTEST ROUTE DUE TO ListAmbulanceTimes
-
+                        findAmbulanceWithOwner(listAmbulanceTimes, 0);
                     }
 
                     @Override
@@ -233,7 +228,55 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
             onBackPressed();
         }
     }
+
+    private void findAmbulanceWithOwner(@NonNull List<PlaceTime> ambulanceTimes, int idx) {
+        // iterate using recursive callbacks
+        if (idx == ambulanceTimes.size()) {
+            Log.w("ambulanceScreenActivity", "findAmbulanceWithOwner:No car found.");
+            return;
+        }
+
+        this.db.collection(Collections.AMBULANCE_OWNERS)
+                .whereEqualTo("maps_id", ambulanceTimes.get(idx).getMapID())
+                .limit(1L)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.e("ambulanceScreenActivity", "findAmbulanceWithOwner:Owner not found.");
+                        return;
+                    }
+
+                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                    String ownerEmail = documentSnapshot.getString("email");
+                    this.db.collection(Collections.AMBULANCES)
+                            .whereEqualTo("owner_email", ownerEmail)
+                            .whereEqualTo("is_available", true)
+                            .limit(1L)
+                            .get()
+                            .addOnSuccessListener(querySnapshots -> {
+                                if (querySnapshots.isEmpty()) {
+                                    Log.d("ambulanceScreenActivity",
+                                            "findAmbulanceWithOwner:No available cars in " + ownerEmail);
+                                    findAmbulanceWithOwner(ambulanceTimes, idx + 1);
+                                    return;
+                                }
+
+                                DocumentSnapshot snapshot = querySnapshots.getDocuments().get(0);
+                                snapshot.getReference()
+                                        .update("is_available", true)
+                                        .addOnCompleteListener(task -> {
+                                            if (!task.isSuccessful()) {
+                                                Log.e("ambulanceScreenActivity",
+                                                        "findAmbulanceWithOwner:Update failure");
+                                                return;
+                                            }
+
+                                            final String msg = "findAmbulanceWithOwner:Car "
+                                                    + snapshot.getString("car_id")
+                                                    + " set to unavailable.";
+                                            Log.d("ambulanceScreenActivity", msg);
+                                        });
+                            });
+                });
+    }
 }
-
-
-

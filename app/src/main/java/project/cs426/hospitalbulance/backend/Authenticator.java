@@ -77,7 +77,7 @@ public class Authenticator {
     }
 
     public void signUp(@NonNull String role) {
-        if (!Arrays.asList("patient", "hospital", "ambulance_owner")
+        if (!Arrays.asList("patient", "hospital", "ambulance")
                 .contains(role)) {
             Log.e(TAG, "signUp:invalid role " + role);
             return;
@@ -139,7 +139,7 @@ public class Authenticator {
         final Map<String, String> roleToCollection = new HashMap<>();
         roleToCollection.put("patient", Collections.PATIENTS);
         roleToCollection.put("hospital", Collections.HOSPITALS);
-        roleToCollection.put("ambulance_owner", Collections.AMBULANCE_OWNERS);
+        roleToCollection.put("ambulance", Collections.AMBULANCES);
 
         String currentUserUid = this.auth.getCurrentUser().getUid();
         WriteBatch batch = this.db.batch();
@@ -157,7 +157,7 @@ public class Authenticator {
         case "hospital":
             batch.set(roleRef, new Hospital(email));
             break;
-        case "ambulance_owner":
+        case "ambulance":
             batch.set(roleRef, new Ambulance(email));
             break;
         default:

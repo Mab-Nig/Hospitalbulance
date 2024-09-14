@@ -32,7 +32,7 @@ public class DriverScreen extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                selectedFragment = new DriverHomeFragment();
+                selectedFragment = defaultHomeScreen;
             } else if (itemId == R.id.record) {
                 DriverRecordFragment recordFragment = new DriverRecordFragment();
                 bundle.putString("username", getIntent().getStringExtra("username"));  // Pass the username to the fragment

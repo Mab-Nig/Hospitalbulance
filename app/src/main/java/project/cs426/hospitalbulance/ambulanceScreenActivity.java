@@ -196,6 +196,7 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
 
     private void addNewCall() {
         Call call = new Call();
+        call.setAddress(USER_PLACE_NAME);
         call.setCallerEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         call.setMapsId(USER_PLACE_ID);
         call.setProcess("WAITING");

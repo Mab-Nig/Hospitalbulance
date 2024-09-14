@@ -10,6 +10,11 @@ public class Ambulance {
     private String mapID = "";
     private boolean isAvailable = true;
 
+    public Ambulance()
+    {
+        
+    }
+
     public Ambulance(String email) {
         this.email = email;
     }

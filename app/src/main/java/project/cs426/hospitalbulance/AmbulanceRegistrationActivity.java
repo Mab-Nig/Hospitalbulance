@@ -61,7 +61,7 @@ public class AmbulanceRegistrationActivity extends AppCompatActivity {
                         if (userType.equals("ambulance")) {
                             updateAmbulanceInfo(email);
                             Intent intent = new Intent(AmbulanceRegistrationActivity.this,
-                                    HomeScreenHomeDriverActivity.class);
+                                    DriverScreen.class);
                             startActivity(intent);
                             finish();
                         }

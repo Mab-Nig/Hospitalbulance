@@ -23,6 +23,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,6 +32,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -42,9 +47,11 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import project.cs426.hospitalbulance.backend.database.Ambulance;
 import project.cs426.hospitalbulance.backend.database.Collections;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,6 +90,8 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
 
     private ListenerRegistration WaittingListenerRegistration;
     private ListenerRegistration CancleListenerRegistration;
+
+    private ListenerRegistration HospitalListenerRegistration;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -125,6 +134,8 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                         des.setText("AVAILABLE");
                         des.setBackgroundColor(Color.parseColor("#00CF00"));
                         updateStatus("FINISH");
+                        Button call = requireView().findViewById(R.id.call_button);
+                        call.setBackgroundColor(Color.parseColor("#808080"));
                         callID = "";
                         break;
                     }
@@ -147,6 +158,7 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                         des.setText("GO TO HOSPITAL");
                         des.setBackgroundColor(Color.parseColor("#C53434"));
                         updateStatus("GO TO HOSPITAL");
+
                         break;
                     }
                     case 4:
@@ -296,7 +308,17 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                                         LatLng NullLocation = new LatLng(0, 0);
                                         mMap.addMarker(new MarkerOptions().position(NullLocation).title("Call has been cancel"));
                                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(NullLocation, 15));
+
                                         //set_car_available to true
+                                        db.collection(Collections.AMBULANCES).whereEqualTo("email", username)
+                                                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                                                   for(DocumentSnapshot amDoc : queryDocumentSnapshots)
+                                                   {
+                                                       Ambulance car = amDoc.toObject(Ambulance.class);
+                                                       car.setAvailable(true);
+                                                       db.collection(Collections.AMBULANCES).document(amDoc.getId()).set(car);
+                                                   }
+                                                });
                                     }
                                     // Use or display the data as needed
                                 } else {
@@ -328,14 +350,41 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                                     for (DocumentSnapshot doc : value) {
                                         project.cs426.hospitalbulance.backend.database.Call aCall
                                                 = doc.toObject(project.cs426.hospitalbulance.backend.database.Call.class);
-                                        GeoPoint callLocation = doc.getGeoPoint("location");
-                                        String placeID = doc.getString("userPlaceID");
+                                        String placeID = doc.getString("maps_id");
                                         PLACE_ID_2 = placeID;
                                         callID  = doc.getId();
-                                        LatLng PatientLocation = new LatLng(callLocation.getLatitude(), callLocation.getLongitude());
-                                        mMap.addMarker(new MarkerOptions().position(PatientLocation).title("Patients are here"));
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PatientLocation, 15));
+//
+                                        Places.initialize(requireContext(), API_KEY);
 
+// Create a new PlacesClient instance
+                                        PlacesClient placesClient = Places.createClient(requireContext());
+
+// Use the Place ID of the location you want to add a marker to
+                                        String placeId = PLACE_ID_2;  // Replace with the actual Place ID
+
+// Define a list of the place details you need (we need the LatLng)
+                                        List<Place.Field> placeFields = Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME);
+
+// Fetch the Place details using the Place ID
+                                        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).build();
+                                        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                                            Place place = response.getPlace();
+                                            LatLng location = place.getLatLng();  // Get the location from the place
+
+                                            if (location != null) {
+                                                // Add a marker to the map at the location of the place
+                                                mMap.addMarker(new MarkerOptions()
+                                                        .position(location)
+                                                        .title("Patient: "+response.getPlace().getName()));
+                                                // Optionally move and zoom the camera to the location
+                                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f));
+                                            }
+                                        }).addOnFailureListener((exception) -> {
+                                            if (exception instanceof ApiException) {
+                                                ApiException apiException = (ApiException) exception;
+                                                Log.e("MapsActivity", "Place not found: " + apiException.getMessage());
+                                            }
+                                        });
                                         Button call = requireView().findViewById(R.id.call_button);
                                         call.setBackgroundColor(Color.parseColor("#00CF00"));
 
@@ -345,6 +394,7 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                                             public void onClick(View v) {
                                                 if(canUpdate && !Objects.equals(callID, ""))
                                                 {
+                                                    confirm.setBackgroundColor(Color.parseColor("#00CF00"));
                                                     aCall.setStatus(statusDetail);
                                                     aCall.setAdults(Integer.valueOf(adultDetail));
                                                     aCall.setChildren(Integer.valueOf(childrenDetail));
@@ -362,6 +412,69 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                         });
 
 
+                        //CollectionReference callsRef = db.collection(Collections.CALLS);
+                        Query query2 = callsRef.whereEqualTo("car_id", carID)
+                                .whereEqualTo("process", "PICKING PATIENT").whereEqualTo("is_accepted", true);
+                        HospitalListenerRegistration = query2.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value,
+                                                @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    Log.w(TAG, "Listen failed.", error);
+                                    return;
+                                }
+
+                                if (value != null) {
+                                    if(value.size() > 1)
+                                    {
+                                        //Call system error as 1 car is use for 2 call?
+                                        return;
+                                    }
+                                    // Process the data from the Firestore snapshot
+                                    for (DocumentSnapshot doc : value) {
+                                        //Log.d("CHECK FOR HOSPITAL ACCEPT", "onEvent: " );
+                                        String placeID = doc.getString("hospital_id");
+                                        PLACE_ID_2 = placeID;
+                                        callID  = doc.getId();
+
+                                        Places.initialize(requireContext(), API_KEY);
+
+// Create a new PlacesClient instance
+                                        PlacesClient placesClient = Places.createClient(requireContext());
+
+// Use the Place ID of the location you want to add a marker to
+                                        String placeId = PLACE_ID_2;  // Replace with the actual Place ID
+
+// Define a list of the place details you need (we need the LatLng)
+                                        List<Place.Field> placeFields = Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME);
+
+// Fetch the Place details using the Place ID
+                                        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields).build();
+                                        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                                            Place place = response.getPlace();
+                                            LatLng location = place.getLatLng();  // Get the location from the place
+
+                                            if (location != null) {
+                                                // Add a marker to the map at the location of the place
+                                                mMap.addMarker(new MarkerOptions()
+                                                        .position(location)
+                                                        .title("Hospital: "+response.getPlace().getName()));
+                                                // Optionally move and zoom the camera to the location
+                                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f));
+                                            }
+                                        }).addOnFailureListener((exception) -> {
+                                            if (exception instanceof ApiException) {
+                                                ApiException apiException = (ApiException) exception;
+                                                Log.e("MapsActivity", "Place not found: " + apiException.getMessage());
+                                            }
+                                        });
+                                    }
+                                    // Use or display the data as needed
+                                } else {
+                                    Log.d(TAG, "Current data: null");
+                                }
+                            }
+                        });
 
 
                     }
@@ -442,6 +555,11 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
         if (CancleListenerRegistration != null) {
             CancleListenerRegistration.remove();
             CancleListenerRegistration = null;
+        }
+
+        if (HospitalListenerRegistration != null) {
+            HospitalListenerRegistration.remove();
+            HospitalListenerRegistration = null;
         }
     }
 }

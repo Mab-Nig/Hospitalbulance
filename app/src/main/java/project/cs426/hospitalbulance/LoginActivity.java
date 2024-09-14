@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.text.InputType;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +41,22 @@ public class LoginActivity extends AppCompatActivity {
         ImageButton backArrowButton = findViewById(R.id.backArrowButton);
         ImageButton fbLoginButton = findViewById(R.id.fbLoginButton);
         ImageButton gmailLoginButton = findViewById(R.id.gmailLoginButton);
-        
+
+        ImageButton togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
+        togglePasswordVisibility.setOnClickListener(v -> {
+            if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Show password
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePasswordVisibility.setImageResource(R.drawable.ic_eye_on);
+            } else {
+                // Hide password
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePasswordVisibility.setImageResource(R.drawable.ic_eye_off);
+            }
+            // Move the cursor to the end of the text
+            passwordEditText.setSelection(passwordEditText.getText().length());
+        });
+
         autoFillLogin(emailEditText, passwordEditText);
 
         loginButton.setOnClickListener(v -> loginUser());
@@ -49,12 +65,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Handle Facebook login
         fbLoginButton.setOnClickListener(v -> {
-            // TODO: Implement Facebook login
         });
 
         // Handle Gmail login
         gmailLoginButton.setOnClickListener(v -> {
-            // TODO: Implement Gmail login
         });
     }
 

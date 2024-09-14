@@ -134,6 +134,8 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                         des.setText("AVAILABLE");
                         des.setBackgroundColor(Color.parseColor("#00CF00"));
                         updateStatus("FINISH");
+                        Button call = requireView().findViewById(R.id.call_button);
+                        call.setBackgroundColor(Color.parseColor("#808080"));
                         callID = "";
                         break;
                     }

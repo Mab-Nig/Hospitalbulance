@@ -58,7 +58,8 @@ public class HomeScreenRecordActivity extends AppCompatActivity implements View.
         prepareContent(username);
         Button save = findViewById(R.id.save_button);
         save.setBackgroundColor(Color.parseColor("#808080"));
-
+        findViewById(R.id.home_button).setOnClickListener(this);
+        findViewById(R.id.personal_button).setOnClickListener(this);
 
 
         EditText edit = findViewById(R.id.add_body);

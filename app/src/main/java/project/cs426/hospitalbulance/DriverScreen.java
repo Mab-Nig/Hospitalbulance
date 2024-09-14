@@ -39,11 +39,7 @@ public class DriverScreen extends AppCompatActivity {
                 recordFragment.setArguments(bundle);
                 selectedFragment = recordFragment;
             } else if (itemId == R.id.editinfo) {
-//                HospitalEditInfoFragment infoFragment = new HospitalEditInfoFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("username", getIntent().getStringExtra("username"));  // Pass the username to the fragment
-//                infoFragment.setArguments(bundle);
-//                selectedFragment = infoFragment;
+                selectedFragment = new DriverPersonalFragment();
             }
 
             if (selectedFragment != null) {

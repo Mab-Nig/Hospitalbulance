@@ -198,6 +198,7 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
         Call call = new Call();
         call.setCallerEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         call.setMapsId(USER_PLACE_ID);
+        call.setProcess("WAITING");
         DocumentReference callRef = this.db.collection(Collections.CALLS).document();
         callId = callRef.getId();
         callRef.set(call)
@@ -337,5 +338,9 @@ public class ambulanceScreenActivity extends AppCompatActivity implements OnMapR
                 + "Car model: " + snapshot.getString("car_model") + "\n"
                 + ownerName;
         carFindingContent.setText(text);
+        ImageView gifImageView = findViewById(R.id.gifImageView);
+        gifImageView.setVisibility(View.INVISIBLE);
+
+
     }
 }

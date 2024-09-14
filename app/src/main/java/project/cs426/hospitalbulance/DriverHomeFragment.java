@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import project.cs426.hospitalbulance.backend.database.Ambulance;
 import project.cs426.hospitalbulance.backend.database.Collections;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -305,7 +306,17 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                                         LatLng NullLocation = new LatLng(0, 0);
                                         mMap.addMarker(new MarkerOptions().position(NullLocation).title("Call has been cancel"));
                                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(NullLocation, 15));
+
                                         //set_car_available to true
+                                        db.collection(Collections.AMBULANCES).whereEqualTo("email", username)
+                                                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                                                   for(DocumentSnapshot amDoc : queryDocumentSnapshots)
+                                                   {
+                                                       Ambulance car = amDoc.toObject(Ambulance.class);
+                                                       car.setAvailable(true);
+                                                       db.collection(Collections.AMBULANCES).document(amDoc.getId()).set(car);
+                                                   }
+                                                });
                                     }
                                     // Use or display the data as needed
                                 } else {

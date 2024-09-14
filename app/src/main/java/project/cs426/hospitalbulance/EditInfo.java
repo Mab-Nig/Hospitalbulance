@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -18,9 +19,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import project.cs426.hospitalbulance.backend.database.BodyMeasurements;
 import project.cs426.hospitalbulance.backend.database.Collections;
@@ -81,8 +86,13 @@ public class EditInfo extends AppCompatActivity {
                         }
                         if(patientInfo != null)
                         {
+                            Date timestamp = patientInfo.getBirthDate();
+                            // Format Date to string
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+                            String formattedDateString = formatter.format(timestamp);
+
                             firstName.setText(patientInfo.getName());
-                            address.setText(patientInfo.getBirthDate().toString());
+                            address.setText(formattedDateString);
                         }
                         if (medicalInfo != null) {
                             BodyMeasurements bodyMeasurements = medicalInfo.getBodyMeasurements();
@@ -109,9 +119,21 @@ public class EditInfo extends AppCompatActivity {
                         updates.put("medical_info.body_measurements.blood_type", bloodType.getText().toString());
 
 
-
+                        String dateString = address.getText().toString();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+                        Date date = null;
+                        try {
+                            date = formatter.parse(dateString);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Patient patient = document.toObject(Patient.class);
+                        PatientInfo patientInfo = patient.getInfo();
+                        patientInfo.setBirthDate(date);
+                        patientInfo.setName(firstName.getText().toString());
+                        updates.put("info", patientInfo);
                         updates.put("email", email.getText().toString());
-                        updates.put("info.name", firstName.getText().toString());
+
 
 
 

@@ -75,7 +75,7 @@ public class AmbulancePersonal extends AppCompatActivity {
                     }
                 });
 
-
+        addSignOutListener();
     }
 
     private void readData(String username, EditText etCarIdPer, EditText etCarModelPer,Switch switchShowAddress,ScrollView scrollViewAddress,TextView tvCarAddress) {
@@ -166,5 +166,21 @@ public class AmbulancePersonal extends AppCompatActivity {
         editor.putString("password","123456");
         editor.apply(); // Save new data
 
+    }
+    public void logoutClicked() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    private void addSignOutListener() {
+        FirebaseAuth.IdTokenListener signOutListener = auth -> {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser == null) {
+                Intent intent = new Intent(AmbulancePersonal.this, SignupActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        };
+        FirebaseAuth.getInstance().addIdTokenListener(signOutListener);
     }
 }

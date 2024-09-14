@@ -261,6 +261,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
     public void onClick(View v) {
         if (v == findViewById(R.id.document_button)) {
             Intent myIntent = new Intent(HomeScreenHomeActivity.this, HomeScreenRecordActivity.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             myIntent.putExtra("username", username); // Optional parameters
             this.startActivity(myIntent);
         }
@@ -296,6 +297,7 @@ public class HomeScreenHomeActivity extends AppCompatActivity implements View.On
         else if(v == findViewById(R.id.personal_button))
         {
             Intent myIntent_personal = new Intent(HomeScreenHomeActivity.this, HomeScreenPersonalActivity.class);
+            myIntent_personal.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             myIntent_personal.putExtra("username", username); // Optional parameters
             this.startActivity(myIntent_personal);
         }

@@ -29,7 +29,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.Timestamp;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import project.cs426.hospitalbulance.backend.database.Ambulance;
@@ -204,8 +206,11 @@ public class DriverRecordFragment extends Fragment {
 
                                             Log.d("CALL", call.getAddress());
                                             Log.d("CALL", call.getCallerEmail());
-
-                                           dataCall.add(call.getTimestamp().toString());
+                                            Date timestamp = call.getTimestamp();
+                                            // Format Date to string
+                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+                                            String formattedDateString = formatter.format(timestamp);
+                                           dataCall.add(formattedDateString);
                                             dataCall.add( call.getCallerEmail());
                                             dataCall.add(call.getAddress());
                                         }

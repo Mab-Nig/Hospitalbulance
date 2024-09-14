@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,6 +62,7 @@ public class EditInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 writeDataGeneral(username,firstName,email, bloodType, address);
+                readDataGeneral(username,firstName,email,bloodType,address);
             }
         });
         findViewById(R.id.back_edit).setOnClickListener(new View.OnClickListener() {
@@ -74,8 +76,11 @@ public class EditInfo extends AppCompatActivity {
     private void readDataGeneral(String username,EditText firstName, EditText email, EditText bloodType, EditText address) {
         this.db.collection(Collections.PATIENTS)
                 .whereEqualTo("email",username)
-                .get()
-                .addOnSuccessListener(querySnapshot-> {
+                .addSnapshotListener((querySnapshot,e)-> {
+                    if (e != null) {
+                        Log.e("READ DATA FIREBASE", "Error getting documents: ", e);
+                        return;
+                    }
                     for (DocumentSnapshot result : querySnapshot.getDocuments()) {
                         Patient man = result.toObject(Patient.class);
                         MedicalInfo medicalInfo = man.getMedicalInfo();
@@ -88,7 +93,7 @@ public class EditInfo extends AppCompatActivity {
                         {
                             Date timestamp = patientInfo.getBirthDate();
                             // Format Date to string
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                             String formattedDateString = formatter.format(timestamp);
 
                             firstName.setText(patientInfo.getName());
@@ -120,19 +125,21 @@ public class EditInfo extends AppCompatActivity {
 
 
                         String dateString = address.getText().toString();
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         Date date = null;
                         try {
                             date = formatter.parse(dateString);
+                            Patient patient = document.toObject(Patient.class);
+                            PatientInfo patientInfo = patient.getInfo();
+                            patientInfo.setBirthDate(date);
+                            patientInfo.setName(firstName.getText().toString());
+                            updates.put("info", patientInfo);
+                            updates.put("email", email.getText().toString());
                         } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                            Toast.makeText(this, "Invalid date format. Please use yyyy-MM-dd.", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        Patient patient = document.toObject(Patient.class);
-                        PatientInfo patientInfo = patient.getInfo();
-                        patientInfo.setBirthDate(date);
-                        patientInfo.setName(firstName.getText().toString());
-                        updates.put("info", patientInfo);
-                        updates.put("email", email.getText().toString());
+
 
 
 

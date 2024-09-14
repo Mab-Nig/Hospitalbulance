@@ -392,6 +392,7 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                                             public void onClick(View v) {
                                                 if(canUpdate && !Objects.equals(callID, ""))
                                                 {
+                                                    confirm.setBackgroundColor(Color.parseColor("#00CF00"));
                                                     aCall.setStatus(statusDetail);
                                                     aCall.setAdults(Integer.valueOf(adultDetail));
                                                     aCall.setChildren(Integer.valueOf(childrenDetail));

@@ -1,5 +1,6 @@
 package project.cs426.hospitalbulance.backend.database;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.PropertyName;
 
@@ -24,6 +25,8 @@ public class Call {
 
     private String process = "waiting";
 
+    public Call() {
+    }
     @PropertyName("caller_email")
     public String getCallerEmail() {
         return callerEmail;

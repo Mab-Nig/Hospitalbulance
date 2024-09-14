@@ -51,7 +51,7 @@
         android:fontFamily="@font/poppins_regular"
         android:text="PRESS CALL FOR AMBULANCE AT YOUR PLACE"
         android:textColor="@color/white"
-        android:textSize="6pt"
+        android:textSize="5pt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

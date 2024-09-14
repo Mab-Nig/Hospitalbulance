@@ -277,7 +277,7 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
                         carID =  result.getString("car_id");
                         CollectionReference callsRef = firestore.collection(Collections.CALLS);
                         Query query1 = callsRef.whereEqualTo("car_id", carID)
-                                .whereEqualTo("process", "cancel");
+                                .whereEqualTo("process", "CANCELLED");
 
                         CancleListenerRegistration = query1.addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
@@ -329,7 +329,7 @@ public class DriverHomeFragment extends Fragment implements OnMapReadyCallback {
 
 
                         Query query = callsRef.whereEqualTo("car_id", carID)
-                                .whereEqualTo("process", "waiting");
+                                .whereEqualTo("process", "WAITING");
 
                         WaittingListenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override

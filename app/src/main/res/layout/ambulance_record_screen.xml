@@ -54,7 +54,7 @@
 
     <EditText
         android:id="@+id/carID"
-        android:layout_width="70dp"
+        android:layout_width="100dp"
         android:layout_height="45dp"
         android:layout_marginStart="48dp"
         android:layout_marginTop="168dp"

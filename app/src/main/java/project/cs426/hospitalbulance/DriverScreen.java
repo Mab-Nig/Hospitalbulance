@@ -32,18 +32,14 @@ public class DriverScreen extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                selectedFragment = new DriverHomeFragment();
+                selectedFragment = defaultHomeScreen;
             } else if (itemId == R.id.record) {
                 DriverRecordFragment recordFragment = new DriverRecordFragment();
                 bundle.putString("username", getIntent().getStringExtra("username"));  // Pass the username to the fragment
                 recordFragment.setArguments(bundle);
                 selectedFragment = recordFragment;
             } else if (itemId == R.id.editinfo) {
-//                HospitalEditInfoFragment infoFragment = new HospitalEditInfoFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("username", getIntent().getStringExtra("username"));  // Pass the username to the fragment
-//                infoFragment.setArguments(bundle);
-//                selectedFragment = infoFragment;
+                selectedFragment = new DriverPersonalFragment();
             }
 
             if (selectedFragment != null) {

@@ -21,7 +21,7 @@ public class Call {
 
     private int adults = 0;
 
-    private String maps_id = "";
+    private String mapsId = "";
 
     private String process = "waiting";
 
@@ -108,12 +108,14 @@ public class Call {
         this.cases = cases;
     }
 
-    public String getMaps_id() {
-        return maps_id;
+    @PropertyName("maps_id")
+    public String getMapsId() {
+        return mapsId;
     }
 
-    public void setMaps_id(String maps_id) {
-        this.maps_id = maps_id;
+    @PropertyName("maps_id")
+    public void setMapsId(String maps_id) {
+        this.mapsId = maps_id;
     }
 
     public String getProcess() {

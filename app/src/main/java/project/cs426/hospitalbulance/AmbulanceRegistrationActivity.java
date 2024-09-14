@@ -72,6 +72,7 @@ public class AmbulanceRegistrationActivity extends AppCompatActivity {
                 })
                 .signUp("ambulance");
     }
+
     private void updateAmbulanceInfo(String email) {
         this.db.collection(Collections.AMBULANCES)
                 .whereEqualTo("email", email)

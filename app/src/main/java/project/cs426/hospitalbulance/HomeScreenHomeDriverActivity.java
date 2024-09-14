@@ -431,8 +431,8 @@ public class HomeScreenHomeDriverActivity extends AppCompatActivity implements O
         else if(v == findViewById(R.id.document_button))
         {
             Intent myIntent = new Intent(HomeScreenHomeDriverActivity.this, HomeScreenRecordDriverActivity.class);
-            String carID = "59A-11111"; //Perform read carID here instead
-            myIntent.putExtra("carID", carID);
+           // String carID = "59A-11111"; //Perform read carID here instead
+            //myIntent.putExtra("carID", carID);
             this.startActivity(myIntent);
         }
         else if(v == findViewById(R.id.personal_button))
